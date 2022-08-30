@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+</head>
+	<body>
+		
+		<p id="money">0</p>
+		
+		<p align="centre">
+			<button id="mainClicker">Click Me</button>
+			<button id="NEO" disabled>Buy Kamigawa</button>
+		</p>
+		<p id="rareCard"></p>
+		<p id="uncommonCard"></p>
+		<p id="commonCard"></p>
+		<p id="landCard"></p>
+
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.1.min.js" 
+		integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+  		crossorigin="anonymous">  			
+  		</script>
+		<script type="text/javascript">
+
+		var count = 0;
+
+		$('#mainClicker').on('click', () =>
+		{
+			count = count+0.01;
+			$('#money').text(Math.round(count*100)/100)
+
+			if (count > 2) {
+				$('#NEO').removeAttr('disabled')
+			} else {
+				$('#NEO').prop('disabled', true)
+			}			
+		})
+
+		$('#NEO').on('click', () =>
+		{
+			var rareArr = []
+			var uncommonArr = []
+			var commonArr = []
+			var landArr = []
+			count = count - 2
+			$('#money').text(Math.round(count*100)/100)
+			rare = Math.floor(Math.random()*100)
+			if (rare > 12.5) {
+				rare = 'rare'
+				rareArr.push(rare)
+			} else {
+				rare = 'mythic'
+				rareArr.push(rare)
+			}
+
+			for(var i=0;i<3;i++) {
+				let uncommon = 'uncommon'
+				uncommonArr.push(uncommon)
+			}
+
+			for(var i=0;i<10;i++) {
+				let common = 'common'
+				commonArr.push(common)
+			}
+
+			land = Math.floor(Math.random()*100)
+				if (land<20){
+					$('#landCard').text('blue')
+				}
+				else if ((land<40) && (20<=land)){
+					$('#landCard').text('red')
+				}
+				else if ((land<60) && (40<=land)){
+					$('#landCard').text('black')
+				}
+				else if ((land<80) && (60<=land)){
+					$('#landCard').text('white')
+				}
+				else if ((land<100) && (80<=land)){
+					$('#landCard').text('green')
+				}
+			
+			$('#rareCard').text(rareArr)
+			$('#uncommonCard').text(uncommonArr)
+			$('#commonCard').text(commonArr)
+			
+
+		})
+
+
+
+		</script>
+
+	</body>
+</html>
