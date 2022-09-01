@@ -11,8 +11,23 @@
 			<button id="mainClicker">Click Me</button>
 			<button id="NEO" disabled>Buy Kamigawa</button>
 		</p>
-		<p id="rareCard"></p>
-		<p id="uncommonCard"></p>
+
+		<div class="modal fade modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body" style="text-align: center;">
+		        <img id="packOpeningCards"></img>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-secondary">Next</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
@@ -23,7 +38,7 @@
 		<script type="text/javascript" src="data.js"></script>
 		<script type="text/javascript">
 
-		var count = 0;
+		var count = 10;
 		var cards = JSON.parse(data);
 
 		function getRandomInt(max) {
@@ -44,6 +59,7 @@
 
 		$('#NEO').on('click', async function()
 		{
+			$('#exampleModal').modal('toggle')
 			var rareArr = Object.entries(cards[0].data.booster.arena.sheets.rareMythic.cards)
 			var uncommonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcUncommon.cards)
 			var commonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcCommon.cards)
@@ -68,14 +84,18 @@
 
 			for(var i=0;i<1;i++) {
 				$( "<img id='landCard"+i+"' height=300></img>" ).appendTo( "body" );
-				await getCommonCard(i)
+				await getLandCard(i)
 			}
 
 			async function getRareCard(i) {
 				var rareCardId = rareArr[getRandomInt(rareArr.length)][0]
 				let obj = cards[0].data.cards.find(o => o.uuid == rareCardId);
 			  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-    				$('#rareCard'+i).prop('src',data.image_uris.normal)
+			  		if (data.image_uris.normal) {
+    					$('#rareCard'+i).prop('src',data.image_uris.normal)
+    				} else {
+    					$('#rareCard'+i).prop('src',data.image_uris.small)
+    				}
 				});	
 			}
 			
@@ -99,7 +119,7 @@
 				var landCardId = landArr[getRandomInt(landArr.length)][0]
 				let obj = cards[0].data.cards.find(o => o.uuid == landCardId);
 			  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-    				$('#landCard').prop('src',data.image_uris.normal)    				
+    				$('#packOpeningCards').prop('src',data.image_uris.normal)    				
 				});	
 			}
 			
