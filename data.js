@@ -8,12 +8,12 @@ data = `[{
 		"booster": {
 			"arena": {
 				"boosters": [{
-					"contents": {
-						"dfcCommonUncommon": 1,
-						"land": 1,
-						"rareMythic": 1,
+					"contents": {						
+						"land": 1,						
 						"sfcCommon": 9,
-						"sfcUncommon": 3
+						"dfcCommonUncommon": 1,
+						"sfcUncommon": 3,
+						"rareMythic": 1
 					},
 					"weight": 1
 				}],

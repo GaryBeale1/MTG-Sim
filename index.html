@@ -22,8 +22,8 @@
 		        <img id="packOpeningCards"></img>
 		      </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-secondary">Next</button>
+		        <button type="button" id="closeModalButton" style="display: none;" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		        <button type="button" id="nextCardButton" class="btn btn-secondary">Next</button>
 		      </div>
 		    </div>
 		  </div>
@@ -40,6 +40,17 @@
 
 		var count = 10;
 		var cards = JSON.parse(data);
+		var pack, types, freq
+
+		var rareArr = Object.entries(cards[0].data.booster.arena.sheets.rareMythic.cards)
+		var uncommonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcUncommon.cards)
+		var commonUncommonArr = Object.entries(cards[0].data.booster.arena.sheets.dfcCommonUncommon.cards)
+		var commonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcCommon.cards)
+		var landArr = Object.entries(cards[0].data.booster.arena.sheets.land.cards)
+
+		$(document).ready(function(){
+			
+		})
 
 		function getRandomInt(max) {
   			return Math.floor(Math.random() * max);
@@ -57,74 +68,109 @@
 			}			
 		})
 
+		$('#nextCardButton').on('click', () =>
+		{
+			populateModal()
+		})
+
 		$('#NEO').on('click', async function()
 		{
 			$('#exampleModal').modal('toggle')
-			var rareArr = Object.entries(cards[0].data.booster.arena.sheets.rareMythic.cards)
-			var uncommonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcUncommon.cards)
-			var commonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcCommon.cards)
-			var landArr = Object.entries(cards[0].data.booster.arena.sheets.land.cards)
+			$('#closeModalButton').css('display', 'none')
+			$('#nextCardButton').css('display', 'inline-block')
 			count = count - 2
-			$('#money').text(Math.round(count*100)/100)
-
-			for(var i=0;i<1;i++) {
-				$( "<img id='rareCard"+i+"' height=300></img>" ).appendTo( "body" );
-				await getRareCard(i)
-			}
-
-			for(var i=0;i<3;i++) {
-				$( "<img id='uncommonCard"+i+"' height=300></img>" ).appendTo( "body" );
-				await getUncommonCard(i)
-			}
-
-			for(var i=0;i<10;i++) {
-				$( "<img id='commonCard"+i+"' height=300></img>" ).appendTo( "body" );
-				await getCommonCard(i)
-			}
-
-			for(var i=0;i<1;i++) {
-				$( "<img id='landCard"+i+"' height=300></img>" ).appendTo( "body" );
-				await getLandCard(i)
-			}
-
-			async function getRareCard(i) {
-				var rareCardId = rareArr[getRandomInt(rareArr.length)][0]
-				let obj = cards[0].data.cards.find(o => o.uuid == rareCardId);
-			  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-			  		if (data.image_uris.normal) {
-    					$('#rareCard'+i).prop('src',data.image_uris.normal)
-    				} else {
-    					$('#rareCard'+i).prop('src',data.image_uris.small)
-    				}
-				});	
-			}
-			
-			async function getUncommonCard(i) {
-				var uncommonCardId = uncommonArr[getRandomInt(uncommonArr.length)][0]
-				let obj = cards[0].data.cards.find(o => o.uuid == uncommonCardId);
-			  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-    				$('#uncommonCard'+i).prop('src',data.image_uris.normal)
-				});	
-			}
-
-			async function getCommonCard(i) {
-				var commonCardId = commonArr[getRandomInt(commonArr.length)][0]
-				let obj = cards[0].data.cards.find(o => o.uuid == commonCardId);
-			  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-    				$('#commonCard'+i).prop('src',data.image_uris.normal)
-				});	
-			}
-
-			async function getLandCard(i) {
-				var landCardId = landArr[getRandomInt(landArr.length)][0]
-				let obj = cards[0].data.cards.find(o => o.uuid == landCardId);
-			  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-    				$('#packOpeningCards').prop('src',data.image_uris.normal)    				
-				});	
-			}
-			
+			$('#money').text(Math.round(count*100)/100)	
+			getPackCards()
+			populateModal()			
 
 		})
+
+		//FIX SOME URI ISSUES IN GETS
+		async function getUncommonCard() {
+			var uncommonCardId = uncommonArr[getRandomInt(uncommonArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == uncommonCardId);
+		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+				$('#packOpeningCards').prop('src',data.image_uris.normal)
+			});	
+		}
+
+		async function getCommonUncommonCard() {
+			var commonUncommonCardId = commonUncommonArr[getRandomInt(commonUncommonArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == commonUncommonCardId);
+		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+				$('#packOpeningCards').prop('src',data.image_uris.normal)
+			});	
+		}
+
+		async function getCommonCard() {
+			var commonCardId = commonArr[getRandomInt(commonArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == commonCardId);
+		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+				$('#packOpeningCards').prop('src',data.image_uris.normal)
+			});	
+		}
+
+		async function getLandCard() {
+			var landCardId = landArr[getRandomInt(landArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == landCardId);
+		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+				$('#packOpeningCards').prop('src',data.image_uris.normal)    				
+			});	
+		}
+
+		async function getRareCard() {
+			var rareCardId = rareArr[getRandomInt(rareArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == rareCardId);
+		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+		  		if (data.image_uris.normal) {
+					$('#packOpeningCards').prop('src',data.image_uris.normal)
+				} else {
+					$('#packOpeningCards').prop('src',data.image_uris.small)
+				}
+			});	
+		}
+
+		function getPackCards(){
+			pack = cards[0].data.booster.arena.boosters[0].contents
+			types = Object.keys(pack)
+			freq = Object.values(pack)
+		}
+
+		//Make this switch work proper
+		async function populateModal(){			
+			if (freq[0] > 0) {
+				switch(types[0]){
+					case 'land': 
+						await getLandCard()
+						break
+
+					case 'sfcCommon': 
+						await getCommonCard()
+						break
+
+					case 'dfcCommonUncommon': 
+						getCommonUncommonCard()
+						break
+
+					case 'sfcUncommon': 
+						await getUncommonCard()
+						break
+
+					case 'rareMythic': 
+						await getRareCard()
+						break
+				}
+				freq[0] = freq[0]-1
+				if (freq[0] == 0) {
+					freq.shift()
+					types.shift()
+					if (freq[0] == undefined){
+						$('#nextCardButton').css('display', 'none')
+						$('#closeModalButton').css('display', 'inline-block')
+					}
+				}
+			}			
+		}
 
 
 
