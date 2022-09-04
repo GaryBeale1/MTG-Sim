@@ -16,8 +16,8 @@
 				<p class="buttonText">Buy Pack <i class="fa-solid fa-money-check-dollar"></i></p>			
 			</div>
 
-			<div id="SNC" class="mainDisplay secondaryDisplay col">
-				<p class="buttonText">Inventory (Coming Soon) <i class="fa-solid fa-money-check-dollar"></i></p>			
+			<div id="inventory" class="mainDisplay secondaryDisplay col">
+				<p class="buttonText">Inventory (Coming Soon) <i class="fa fa-suitcase" aria-hidden="true"></i></p>			
 			</div>
 
 			<div id="shop" class="mainDisplay secondaryDisplay col">
@@ -43,7 +43,7 @@
 		  </div>
 		</div>
 
-		<!-- Pack Modal -->
+		<!-- Pack Purchase Modal -->
 		<div class="modal fade modal-lg" id="packPurchaseModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
@@ -60,12 +60,12 @@
 		    		</tr>
 		    		<tr>
 		    			<td>Kamigawa Neon Dynasty</td>
-		    			<td>$2.00</td>
+		    			<td>$4.00</td>
 		    			<td><button id="NEO">Buy</button></td>
 		    		</tr>
 		    		<tr>
 		    			<td>Streets of New Capenna</td>
-		    			<td>$2.00</td>
+		    			<td>$4.00</td>
 		    			<td><button id="SNC">Buy</button></td>
 		    		</tr>
 		    	</table>	      		
@@ -81,6 +81,7 @@
 		  <div class="modal-dialog">
 		    <div class="modal-content">
     	      <div class="modal-header">
+    	      	<h3>Shop</h3>
         		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			  </div>
 		      <div class="modal-body" style="text-align: center;">	
@@ -88,9 +89,30 @@
 		    		<tr>
 		    			<td>Item</td>
 		    			<td>Price</td>
-		    			<td><button>Buy</button></td>
+		    			<td></td>
+		    		</tr>
+		    		<tr>
+		    			<td>Increase Money per Second</td>
+		    			<td>$5.00</td>
+		    			<td><button onclick="increaseMPS(5)">Buy</button></td>
 		    		</tr>
 		    	</table>	      		
+		      </div>
+		      <div class="modal-footer">
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- Inventory Modal -->
+		<div class="modal fade modal-lg" id="inventoryModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+    	      <div class="modal-header">
+        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+		      <div class="modal-body" style="text-align: center;">	
+		    		      		
 		      </div>
 		      <div class="modal-footer">
 		      </div>
@@ -109,16 +131,17 @@
 		<script type="text/javascript">
 
 		var count = 10;
-		var mps = 0.0001
+		var mps = 0.0000
 		var NeoCards = JSON.parse(NEO);
 		var SncCards = JSON.parse(SNC);
-		var pack, types, freq, flip, cards
+		var pack, types, freq, flip, cards, cardId
 
 		var rareArr
 		var uncommonArr
 		var commonUncommonArr
 		var commonArr
 		var landArr
+		var inventoryArr = []
 
 		$(document).ready(function(){
 			$('#cardModal').modal({backdrop: 'static', keyboard: false})
@@ -128,6 +151,14 @@
 				updateMoney()
 			}, 1000);
 		})
+
+		function increaseMPS(price) {
+			if (count > price) {
+				count = count - price
+				mps = mps+0.0005
+				updateMoney()
+			}
+		}
 
 		function getRandomInt(max) {
   			return Math.floor(Math.random() * max);
@@ -148,7 +179,13 @@
 
 		$('#nextCardButton').on('click', () =>
 		{
-			populateModal()
+			addCardToInvent()
+			populateModal()			
+		})
+
+		$('#closeModalButton').on('click', () =>
+		{
+			addCardToInvent()			
 		})
 
 		$('#sellCardButton').on('click', () =>
@@ -217,9 +254,14 @@
 			$('#packPurchaseModal').modal('show');
 		})
 
+		$('#inventory').on('click', function()
+		{	
+			console.log(inventoryArr)
+		})
+
 		async function getUncommonCard() {
-			var uncommonCardId = uncommonArr[getRandomInt(uncommonArr.length)][0]
-			let obj = cards[0].data.cards.find(o => o.uuid == uncommonCardId);
+			cardId = uncommonArr[getRandomInt(uncommonArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal)
 				$('#priceValue').text(data.prices.usd)
@@ -227,10 +269,10 @@
 		}
 
 		async function getCommonUncommonCard() {
-			var commonUncommonCardId = commonUncommonArr[getRandomInt(commonUncommonArr.length)][0]
-			let obj = cards[0].data.cards.find(o => o.uuid == commonUncommonCardId);
+			cardId = commonUncommonArr[getRandomInt(commonUncommonArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-		  		if (data.card_faces[0].image_uris.normal != undefined) {
+		  		if (data.card_faces != undefined) {
 		  			flip = data.card_faces
 					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
 					$('#priceValue').text(data.prices.usd)
@@ -243,8 +285,8 @@
 		}
 
 		async function getCommonCard() {
-			var commonCardId = commonArr[getRandomInt(commonArr.length)][0]
-			let obj = cards[0].data.cards.find(o => o.uuid == commonCardId);
+			cardId = commonArr[getRandomInt(commonArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal)
 				$('#priceValue').text(data.prices.usd)
@@ -252,8 +294,8 @@
 		}
 
 		async function getLandCard() {
-			var landCardId = landArr[getRandomInt(landArr.length)][0]
-			let obj = cards[0].data.cards.find(o => o.uuid == landCardId);
+			cardId = landArr[getRandomInt(landArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal) 
 				$('#priceValue').text(data.prices.usd)   				
@@ -261,14 +303,16 @@
 		}
 
 		async function getRareCard() {
-			var rareCardId = rareArr[getRandomInt(rareArr.length)][0]
-			let obj = cards[0].data.cards.find(o => o.uuid == rareCardId);
+			cardId = rareArr[getRandomInt(rareArr.length)][0]
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-		  		if (data.image_uris.normal) {
-					$('#packOpeningCards').prop('src',data.image_uris.normal)
+		  		if (data.card_faces != undefined) {
+		  			flip = data.card_faces
+					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
 					$('#priceValue').text(data.prices.usd)
+					$('#flipCard').css('visibility', 'visible');
 				} else {
-					$('#packOpeningCards').prop('src',data.image_uris.small)
+					$('#packOpeningCards').prop('src',data.image_uris.normal)
 					$('#priceValue').text(data.prices.usd)
 				}
 			});	
@@ -329,6 +373,16 @@
 			} else {
 				$('#packOpeningCards').prop('src',flip[0].image_uris.normal)
 			}
+		}
+
+		function addCardToInvent() {
+			var currentCard= {
+				imgLink: $('#packOpeningCards').attr('src'),
+				uuid: cardId,
+				qty:1,
+				price: parseFloat($('#priceValue').text())
+			}
+			inventoryArr.push(currentCard)
 		}
 
 
