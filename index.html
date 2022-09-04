@@ -12,12 +12,16 @@
 			<p class="mpsDisplay">$<span id="mpsMoney">0</span> per second</p>
 		</div>
 		<div class="grid">
-			<div id="NEO" class="mainDisplay secondaryDisplay col">
-				<p class="buttonText">Buy Kamigawa booster draft <i class="fa-solid fa-money-check-dollar"></i></p>			
+			<div id="packPurchase" class="mainDisplay secondaryDisplay col">
+				<p class="buttonText">Buy Pack <i class="fa-solid fa-money-check-dollar"></i></p>			
+			</div>
+
+			<div id="SNC" class="mainDisplay secondaryDisplay col">
+				<p class="buttonText">Inventory (Coming Soon) <i class="fa-solid fa-money-check-dollar"></i></p>			
 			</div>
 
 			<div id="shop" class="mainDisplay secondaryDisplay col">
-				<p class="buttonText">Shop <i class="fa-solid fa-shopping-cart"></i><p>
+				<p class="buttonText">Shop (WIP) <i class="fa-solid fa-shopping-cart"></i><p>
 			</div>
 		</div>
 
@@ -39,6 +43,39 @@
 		  </div>
 		</div>
 
+		<!-- Pack Modal -->
+		<div class="modal fade modal-lg" id="packPurchaseModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+    	      <div class="modal-header">
+    	      	<h3>Buy A Pack</h3>
+        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+		      <div class="modal-body" style="text-align: center;">	
+		    	<table>
+		    		<tr>
+		    			<td>Pack</td>
+		    			<td>Price</td>
+		    			<td></td>
+		    		</tr>
+		    		<tr>
+		    			<td>Kamigawa Neon Dynasty</td>
+		    			<td>$2.00</td>
+		    			<td><button id="NEO">Buy</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>Streets of New Capenna</td>
+		    			<td>$2.00</td>
+		    			<td><button id="SNC">Buy</button></td>
+		    		</tr>
+		    	</table>	      		
+		      </div>
+		      <div class="modal-footer">
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
 		<!-- Shop Modal -->
 		<div class="modal fade modal-lg" id="shopModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
@@ -46,7 +83,14 @@
     	      <div class="modal-header">
         		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			  </div>
-		      <div class="modal-body" style="text-align: center;">		      		
+		      <div class="modal-body" style="text-align: center;">	
+		    	<table>
+		    		<tr>
+		    			<td>Item</td>
+		    			<td>Price</td>
+		    			<td><button>Buy</button></td>
+		    		</tr>
+		    	</table>	      		
 		      </div>
 		      <div class="modal-footer">
 		      </div>
@@ -60,19 +104,21 @@
 		integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
   		crossorigin="anonymous">  			
   		</script>
-		<script type="text/javascript" src="data.js"></script>
+		<script type="text/javascript" src="NEO.js"></script>
+		<script type="text/javascript" src="SNC.js"></script>
 		<script type="text/javascript">
 
 		var count = 10;
 		var mps = 0.0001
-		var cards = JSON.parse(data);
-		var pack, types, freq, flip
+		var NeoCards = JSON.parse(NEO);
+		var SncCards = JSON.parse(SNC);
+		var pack, types, freq, flip, cards
 
-		var rareArr = Object.entries(cards[0].data.booster.arena.sheets.rareMythic.cards)
-		var uncommonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcUncommon.cards)
-		var commonUncommonArr = Object.entries(cards[0].data.booster.arena.sheets.dfcCommonUncommon.cards)
-		var commonArr = Object.entries(cards[0].data.booster.arena.sheets.sfcCommon.cards)
-		var landArr = Object.entries(cards[0].data.booster.arena.sheets.land.cards)
+		var rareArr
+		var uncommonArr
+		var commonUncommonArr
+		var commonArr
+		var landArr
 
 		$(document).ready(function(){
 			$('#cardModal').modal({backdrop: 'static', keyboard: false})
@@ -120,6 +166,36 @@
 		$('#NEO').on('click', async function()
 		{
 			if (count > 4) {
+				$('#packPurchaseModal').modal('hide');
+				cards = NeoCards
+				rareArr = Object.entries(cards[0].data.booster.default.sheets.rareMythic.cards)
+				uncommonArr = Object.entries(cards[0].data.booster.default.sheets.uncommon.cards)
+				commonUncommonArr = Object.entries(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
+				commonArr = Object.entries(cards[0].data.booster.default.sheets.common.cards)
+				landArr = Object.entries(cards[0].data.booster.default.sheets.land.cards)
+
+				$('#cardModal').modal('show')
+				$('#closeModalButton').css('display', 'none')
+				$('#nextCardButton').css('display', 'inline-block')
+				count = count - 4
+				updateMoney()
+				getPackCards()
+				populateModal()	
+			}		
+
+		})
+
+		$('#SNC').on('click', async function()
+		{
+			if (count > 4) {
+				$('#packPurchaseModal').modal('hide');
+				cards = SncCards
+				rareArr = Object.entries(cards[0].data.booster.default.sheets.rareMythic.cards)
+				uncommonArr = Object.entries(cards[0].data.booster.default.sheets.uncommon.cards)
+				commonUncommonArr = Object.entries(cards[0].data.booster.default.sheets.foil.cards)
+				commonArr = Object.entries(cards[0].data.booster.default.sheets.common.cards)
+				landArr = Object.entries(cards[0].data.booster.default.sheets.basic.cards)
+
 				$('#cardModal').modal('show')
 				$('#closeModalButton').css('display', 'none')
 				$('#nextCardButton').css('display', 'inline-block')
@@ -134,6 +210,11 @@
 		$('#shop').on('click', function()
 		{	
 			$('#shopModal').modal('show');
+		})
+
+		$('#packPurchase').on('click', function()
+		{	
+			$('#packPurchaseModal').modal('show');
 		})
 
 		async function getUncommonCard() {
@@ -194,7 +275,7 @@
 		}
 
 		function getPackCards(){
-			pack = cards[0].data.booster.arena.boosters[0].contents
+			pack = cards[0].data.booster.default.boosters[0].contents
 			types = Object.keys(pack)
 			freq = Object.values(pack)
 		}
@@ -204,11 +285,15 @@
 			$('#flipCard').css('visibility', 'hidden');		
 			if (freq[0] > 0) {
 				switch(types[0]){
+					case 'basic':
+						await getLandCard()
+						break
+
 					case 'land': 
 						await getLandCard()
 						break
 
-					case 'sfcCommon': 
+					case 'common': 
 						await getCommonCard()
 						break
 
@@ -216,7 +301,7 @@
 						getCommonUncommonCard()
 						break
 
-					case 'sfcUncommon': 
+					case 'uncommon': 
 						await getUncommonCard()
 						break
 
