@@ -19,7 +19,7 @@
 			</div>
 
 			<div id="inventory" class="mainDisplay secondaryDisplay col">
-				<p class="buttonText">Inventory (Coming Soon) <i class="fa fa-suitcase" aria-hidden="true"></i></p>			
+				<p class="buttonText">Inventory (WIP) <i class="fa fa-suitcase" aria-hidden="true"></i></p>			
 			</div>
 
 			<div id="shop" class="mainDisplay secondaryDisplay col">
@@ -114,11 +114,27 @@
         		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			  </div>
 		      <div class="modal-body" style="text-align: center;">	
-		    	<div class="grid-x">
-		    		<div class="cell medium-6 large-4">Test cells</div>
-		    		<div class="cell medium-6 large-4">Test cells</div>
-		    		<div class="cell medium-6 large-4">Test cells</div>
-		    	</div>
+		    	<div class="container">
+  					<div class="row row-cols-4">
+  					</div>
+  				</div>
+		      </div>
+		      <div class="modal-footer">
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- Inspect Modal -->
+		<div class="modal fade modal-lg" id="inspectModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+    	      <div class="modal-header">
+        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+		      <div class="modal-body" style="text-align: center;">	
+		      	<i class="fa fa-refresh modalElements" id="flipCardInspect" onclick="flipCardInspect()" style="cursor: pointer; display: block; margin-bottom: 10px;"></i>
+		    	<img id="inspectImg"></img>
 		      </div>
 		      <div class="modal-footer">
 		      </div>
@@ -156,6 +172,12 @@
 		var NeoCards = JSON.parse(NEO);
 		var SncCards = JSON.parse(SNC);
 		var pack, types, freq, flip, cards, cardId, saveData
+
+		var inventData = {
+			"smallImgSrc":'', 
+			"doubleFaceCard": false,
+			"secondImgLink": ''
+		}
 
 		var rareArr
 		var uncommonArr
@@ -201,7 +223,10 @@
 		$('#nextCardButton').on('click', () =>
 		{
 			addCardToInvent()
-			populateModal()			
+			populateModal()	
+			inventData.smallImgSrc = ''
+			inventData.doubleFaceCard = false	
+			inventData.secondImgLink = ''	
 		})
 
 		$('#closeModalButton').on('click', () =>
@@ -211,6 +236,9 @@
 
 		$('#sellCardButton').on('click', () =>
 		{
+			inventData.smallImgSrc = ''
+			inventData.doubleFaceCard = false
+			inventData.secondImgLink = ''
 			count = count + parseFloat($('#priceValue').text())
 			updateMoney()
 			populateModal()
@@ -224,13 +252,30 @@
 		$('#settings').on('click', () =>
 		{
 			$('#settingsModal').modal('show')
+		})
+
+		$('#shop').on('click', function()
+		{	
+			$('#shopModal').modal('show');
+		})
+
+		$('#packPurchase').on('click', function()
+		{	
+			$('#packPurchaseModal').modal('show');
+		})
+
+		$('#inventory').on('click', function()
+		{	
+			console.log(inventoryArr)
 		})	
 
 		$('#inventory').on('click', () =>
-		{
+		{			
 			$('#inventoryModal').modal('show')
+			populateInventory()
 		})		
 
+		//Add key, value func to set weight
 		$('#NEO').on('click', async function()
 		{
 			if (count > 4) {
@@ -275,26 +320,12 @@
 
 		})
 
-		$('#shop').on('click', function()
-		{	
-			$('#shopModal').modal('show');
-		})
-
-		$('#packPurchase').on('click', function()
-		{	
-			$('#packPurchaseModal').modal('show');
-		})
-
-		$('#inventory').on('click', function()
-		{	
-			console.log(inventoryArr)
-		})
-
 		async function getUncommonCard() {
 			cardId = uncommonArr[getRandomInt(uncommonArr.length)][0]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal)
+				inventData.smallImgSrc = data.image_uris.small
 				$('#priceValue').text(data.prices.usd)
 			});	
 		}
@@ -305,10 +336,14 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		if (data.card_faces != undefined) {
 		  			flip = data.card_faces
+		  			inventData.doubleFaceCard = true
+		  			inventData.secondImgLink = data.card_faces[1].image_uris.normal
+		  			inventData.smallImgSrc = data.card_faces[0].image_uris.small
 					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
 					$('#priceValue').text(data.prices.usd)
 					$('#flipCard').css('visibility', 'visible');
 				} else {
+					inventData.smallImgSrc = data.image_uris.small
 					$('#packOpeningCards').prop('src',data.image_uris.normal)
 					$('#priceValue').text(data.prices.usd)
 				}
@@ -320,6 +355,7 @@
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal)
+				inventData.smallImgSrc = data.image_uris.small
 				$('#priceValue').text(data.prices.usd)
 			});	
 		}
@@ -329,6 +365,7 @@
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal) 
+				inventData.smallImgSrc = data.image_uris.small
 				$('#priceValue').text(data.prices.usd)   				
 			});	
 		}
@@ -339,11 +376,15 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		if (data.card_faces != undefined) {
 		  			flip = data.card_faces
+		  			inventData.doubleFaceCard = true
+		  			inventData.secondImgLink = data.card_faces[1].image_uris.normal
+		  			inventData.smallImgSrc = data.card_faces[0].image_uris.small
 					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
 					$('#priceValue').text(data.prices.usd)
 					$('#flipCard').css('visibility', 'visible');
 				} else {
 					$('#packOpeningCards').prop('src',data.image_uris.normal)
+					inventData.smallImgSrc = data.image_uris.small
 					$('#priceValue').text(data.prices.usd)
 				}
 			});	
@@ -398,6 +439,22 @@
 					}			
 		}
 
+		function populateInventory() {
+			$( ".cardCol" ).remove();
+			inventoryArr.forEach(function (arrayItem) {
+				str = arrayItem.uuid.replace(/\s/g, '');
+    			$(".row-cols-4").append(`<div class="col cardCol">
+    										<div class="card">
+										      <img src="`+arrayItem.imgLink.small+`" class="card-img-top" onclick=openImage("`+arrayItem.imgLink.normal+`",`+arrayItem.dfc+`,"`+arrayItem.imgLink.secondFace+`")>
+										      <div class="card-body" onclick=sellInventCard("`+str+`")>
+										        <h5 class="card-title">Quantity: `+arrayItem.qty+`</h5>
+										        <p class="card-text">Sell For $`+arrayItem.price.toFixed(2)+`</p>
+										      </div>
+										    </div>
+										  </div>`);
+			});
+		}
+
 		function flipCard() {
 			if (flip[0].image_uris.normal == $('#packOpeningCards').attr('src')) {
 				$('#packOpeningCards').prop('src',flip[1].image_uris.normal)
@@ -407,13 +464,59 @@
 		}
 
 		function addCardToInvent() {
-			var currentCard= {
-				imgLink: $('#packOpeningCards').attr('src'),
-				uuid: cardId,
-				qty:1,
-				price: parseFloat($('#priceValue').text())
+			var search = inventoryArr.map(e => e.uuid).indexOf(cardId);
+			if (search == -1) {
+				var currentCard= {
+					imgLink: {
+						normal: $('#packOpeningCards').attr('src'),
+						small: inventData.smallImgSrc,
+						secondFace: inventData.secondImgLink
+					},
+					dfc: inventData.doubleFaceCard,
+					uuid: cardId,
+					qty:1,
+					price: parseFloat($('#priceValue').text())
+				}
+				inventoryArr.push(currentCard)
+			} else {
+				inventoryArr[search].qty++ 
 			}
-			inventoryArr.push(currentCard)
+		}
+
+		function sellInventCard(cardUniqueId) {
+			var search = inventoryArr.map(e => e.uuid).indexOf(cardUniqueId);
+			inventoryArr[search].qty--
+			count = count+inventoryArr[search].price
+			updateMoney()
+			if (inventoryArr[search].qty == 0) {
+				inventoryArr.splice(search, 1)				
+			}
+			populateInventory()
+		}
+
+		function openImage(imgLink, doubleFaced, secImgLink) {	
+			if (doubleFaced == false) {
+				$('#flipCardInspect').css('display', 'none');
+				$('#inventoryModal').modal('hide')		
+				$('#inspectModal').modal('show')
+				$('#inspectImg').prop('src', imgLink)
+			} else {
+				$('#flipCardInspect').css('display', 'block');
+				$('#inventoryModal').modal('hide')		
+				$('#inspectModal').modal('show')
+				$('#inspectImg').prop('src', imgLink)
+
+				flip[0].image_uris.normal = imgLink
+				flip[1].image_uris.normal = secImgLink
+			}
+		}
+
+		function flipCardInspect() {
+			if (flip[0].image_uris.normal == $('#inspectImg').attr('src')) {
+				$('#inspectImg').prop('src',flip[1].image_uris.normal)
+			} else {
+				$('#inspectImg').prop('src',flip[0].image_uris.normal)
+			}
 		}
 
 		function createSave() {
