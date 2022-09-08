@@ -61,14 +61,9 @@
 		    			<td></td>
 		    		</tr>
 		    		<tr>
-		    			<td>Kamigawa Neon Dynasty</td>
+		    			<td>Draft Booster</td>
 		    			<td>$4.00</td>
-		    			<td><button id="NEO">Buy</button></td>
-		    		</tr>
-		    		<tr>
-		    			<td>Streets of New Capenna</td>
-		    			<td>$4.00</td>
-		    			<td><button id="SNC">Buy</button></td>
+		    			<td><button id="draftBoosterPurchase">Buy</button></td>
 		    		</tr>
 		    	</table>	      		
 		      </div>
@@ -97,6 +92,11 @@
 		    			<td>Increase Money per Second</td>
 		    			<td>$5.00</td>
 		    			<td><button onclick="increaseMPS(5)">Buy</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>Unlock New Capenna Draft Packs</td>
+		    			<td>$10.00</td>
+		    			<td><button onclick="unlockNewPack('SNC', 10)">Buy</button></td>
 		    		</tr>
 		    	</table>	      		
 		      </div>
@@ -179,6 +179,11 @@
 			"secondImgLink": ''
 		}
 
+		var unlockedPacks = {
+			"NEO": true,
+			"SNC": false
+		}
+
 		var rareArr
 		var uncommonArr
 		var commonUncommonArr
@@ -200,6 +205,14 @@
 				count = count - price
 				mps = mps+0.0005
 				updateMoney()
+			}
+		}
+
+		function unlockNewPack(pack, price) {
+			if (count > price) {
+				count = count - price
+				updateMoney()
+				unlockedPacks[pack] = true
 			}
 		}
 
@@ -273,10 +286,34 @@
 		{			
 			$('#inventoryModal').modal('show')
 			populateInventory()
-		})		
+		})	
+
+		$('#draftBoosterPurchase').on('click', function()
+		{			
+			var unlockedPackArr = Object.entries(unlockedPacks)
+			unlockedPackArr.forEach(function (arrayItem, index) {
+				if (arrayItem[1] == false){
+					unlockedPackArr.splice(index, 1)
+				}
+			})
+			var packToOpen = unlockedPackArr[getRandomInt(unlockedPackArr.length)][0]
+
+			switch(packToOpen)
+			{
+				case "NEO":
+					openNeo()
+					break
+
+				case "SNC":
+					openSnc()
+					break
+
+			}
+		})
+
 
 		//Add key, value func to set weight
-		$('#NEO').on('click', async function()
+		async function openNeo()
 		{
 			if (count > 4) {
 				$('#packPurchaseModal').modal('hide');
@@ -296,9 +333,9 @@
 				populateModal()	
 			}		
 
-		})
+		}
 
-		$('#SNC').on('click', async function()
+		async function openSnc()
 		{
 			if (count > 4) {
 				$('#packPurchaseModal').modal('hide');
@@ -318,7 +355,7 @@
 				populateModal()	
 			}		
 
-		})
+		}
 
 		async function getUncommonCard() {
 			cardId = uncommonArr[getRandomInt(uncommonArr.length)][0]
@@ -522,7 +559,9 @@
 		function createSave() {
 			var textInput = JSON.stringify({
 				"money": count,
-				"mps": mps
+				"mps": mps,
+				"inventory": inventoryArr,
+				"unlockedPacks": unlockedPacks
 		})
 			var element = document.createElement('a');
 		 	element.setAttribute('href','data:text/plain;charset=utf-8, ' + textInput);
@@ -540,6 +579,8 @@
     				saveData = JSON.parse(reader.result)
     				count = saveData.money
     				mps = saveData.mps
+    				inventoryArr = saveData.inventory
+    				unlockedPacks = saveData.unlockedPacks
     				updateMoney()
   			};
   			reader.readAsText(file);

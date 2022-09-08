@@ -1041,68 +1041,7 @@ NEO = `[{
 			"colors": ["W"],
 			"convertedManaCost": 2.0,
 			"edhrecRank": 9060,
-			"finishes": ["nonfoil", "foil"],
-			"foreignData": [{
-				"language": "German",
-				"multiverseId": 548596,
-				"name": "Katana der Ahnen",
-				"text": "Immer wenn ein Samurai oder ein Krieger, den du kontrollierst, alleine angreift, kannst du {1} bezahlen. Wenn du dies tust, lege das Katana der Ahnen an ihn an.Die ausgerüstete Kreatur erhält +2/+1.Ausrüsten {3} ({3}: Lege diese Karte an eine Kreatur deiner Wahl an, die du kontrollierst. Spiele Ausrüsten wie eine Hexerei.)",
-				"type": "Artefakt — Ausrüstung"
-			}, {
-				"language": "Spanish",
-				"multiverseId": 548901,
-				"name": "Katana ancestral",
-				"text": "Siempre que un Samurái o Guerrero que controlas ataque solo, puedes pagar {1}. Cuando lo hagas, anéxale la Katana ancestral.La criatura equipada obtiene +2/+1.Equipar {3}. ({3}: Anexa este Equipo a la criatura objetivo que controlas. Activa la habilidad de equipar como un conjuro.)",
-				"type": "Artefacto — Equipo"
-			}, {
-				"language": "French",
-				"multiverseId": 549206,
-				"name": "Katana ancestral",
-				"text": "À chaque fois quun samouraï ou un guerrier que vous contrôlez attaque seul, vous pouvez payer {1}. Quand vous faites ainsi, attachez-lui le Katana ancestral.La créature équipée gagne +2/+1.Équipement {3} ({3} : Attachez à une créature ciblée que vous contrôlez. Nattachez léquipement que lorsque vous pourriez lancer un rituel.)",
-				"type": "Artefact : équipement"
-			}, {
-				"language": "Italian",
-				"multiverseId": 549511,
-				"name": "Katana Ancestrale",
-				"text": "Ogniqualvolta un Samurai o un Guerriero che controlli attacca da solo, puoi pagare {1}. Quando lo fai, assegnagli la Katana Ancestrale.La creatura equipaggiata prende +2/+1.Equipaggiare {3} ({3}: Assegna a una creatura bersaglio che controlli. Equipaggia solo come una stregoneria.)",
-				"type": "Artefatto — Equipaggiamento"
-			}, {
-				"language": "Japanese",
-				"multiverseId": 549816,
-				"name": "祖先の刀",
-				"text": "あなたがコントロールしている侍や戦士のうち１体が単独で攻撃するたび、あなたは{1}を支払ってもよい。そうしたとき、祖先の刀をそれにつける。装備しているクリーチャーは＋２/＋１の修整を受ける。装備{3}（{3}：あなたがコントロールしているクリーチャー１体を対象とする。これをそれにつける。装備はソーサリーとしてのみ行う。）",
-				"type": "アーティファクト — 装備品"
-			}, {
-				"language": "Korean",
-				"multiverseId": 550121,
-				"name": "선조의 카타나",
-				"text": "당신이 조종하는 사무라이 또는 전사가 혼자 공격할 때마다, 당신은 {1}을 지불할 수 있다. 그렇게 할 때, 선조의 카타나를 그 생물에 부착한다.장착된 생물은 +2/+1을 받는다.장착 {3} ({3}: 당신이 조종하는 생물을 목표로 정한다. 그 생물에 이 장비를 부착한다. 집중마법 시기에만 장착할 수 있다.)",
-				"type": "마법물체 — 장비"
-			}, {
-				"language": "Portuguese (Brazil)",
-				"multiverseId": 550426,
-				"name": "Katana Ancestral",
-				"text": "Toda vez que um Samurai ou Guerreiro que você controla ataca sozinho, você pode pagar {1}. Quando fizer isso, anexe Katana Ancestral a ele.A criatura equipada recebe +2/+1.Equipar {3} ({3}: Anexe este equipamento à criatura alvo que você controla. Equipe somente como um feitiço.)",
-				"type": "Artefato — Equipamento"
-			}, {
-				"language": "Russian",
-				"multiverseId": 550731,
-				"name": "Катана Предков",
-				"text": "Каждый раз, когда Самурай или Воин под вашим контролем атакует в одиночку, вы можете заплатить {1}. Когда вы это делаете, прикрепите к нему Катану Предков.Снаряженное существо получает +2/+1.Снарядить {3} ({3}: прикрепите к целевому существу под вашим контролем. Снаряжайте только как волшебство.)",
-				"type": "Артефакт — Снаряжение"
-			}, {
-				"language": "Chinese Simplified",
-				"multiverseId": 551036,
-				"name": "祖传长刀",
-				"text": "每当一个由你操控的武士或战士单独攻击时，你可以支付{1}。当你如此作时，将祖传长刀贴附于其上。佩带此武具的生物得+2/+1。佩带{3}（{3}：贴附在目标由你操控的生物上。只能于法术时机佩带。）",
-				"type": "神器 ～武具"
-			}, {
-				"language": "Chinese Traditional",
-				"multiverseId": 551341,
-				"name": "祖傳長刀",
-				"text": "每當一個由你操控的武士或戰士單獨攻擊時，你可以支付{1}。當你如此作時，將祖傳長刀貼附於其上。佩帶此武具的生物得+2/+1。佩帶{3}（{3}：貼附在目標由你操控的生物上。只能於巫術時機佩帶。）",
-				"type": "神器 ～武具"
-			}],
+			"finishes": ["nonfoil", "foil"],			
 			"frameVersion": "2015",
 			"hasFoil": true,
 			"hasNonFoil": true,
@@ -1181,67 +1120,6 @@ NEO = `[{
 			"convertedManaCost": 5.0,
 			"edhrecRank": 4044,
 			"finishes": ["nonfoil", "foil"],
-			"foreignData": [{
-				"language": "German",
-				"multiverseId": 548597,
-				"name": "Ao der Morgenhimmel",
-				"text": "Fliegend, WachsamkeitWenn Ao der Morgenhimmel stirbt, bestimme eines —• Schaue dir die obersten sieben Karten deiner Bibliothek an. Bringe davon eine beliebige Anzahl an bleibenden Karten mit Gesamt-Manabetrag 4 oder weniger, die keine Länder sind, ins Spiel. Lege den Rest in zufälliger Reihenfolge unter deine Bibliothek.• Lege auf jede bleibende Karte, die du kontrollierst und die eine Kreatur oder ein Fahrzeug ist, zwei +1/+1-Marken.",
-				"type": "Legendäre Kreatur — Drache, Geist"
-			}, {
-				"language": "Spanish",
-				"multiverseId": 548902,
-				"name": "Ao, el Cielo del Alba",
-				"text": "Vuela, vigilancia.Cuando Ao, el Cielo del Alba muera, elige uno:• Mira las siete primeras cartas de tu biblioteca. Pon en el campo de batalla cualquier cantidad de cartas de permanente que no sean tierra con valor de maná total de 4 o menos de entre ellas. Pon el resto en el fondo de tu biblioteca en un orden aleatorio.• Pon dos contadores +1/+1 sobre cada permanente que controlas que sea una criatura o Vehículo.",
-				"type": "Criatura legendaria — Espíritu dragón"
-			}, {
-				"language": "French",
-				"multiverseId": 549207,
-				"name": "Ao, le ciel de laube",
-				"text": "Vol, vigilanceQuand Ao, le ciel de laube meurt, choisissez lun —• Regardez les sept cartes du dessus de votre bibliothèque. Parmi elles, mettez sur le champ de bataille nimporte quel nombre de cartes de permanent non-terrain avec une valeur de mana inférieure ou égale à 4. Mettez le reste au-dessous de votre bibliothèque dans un ordre aléatoire.• Mettez deux marqueurs +1/+1 sur chaque permanent que vous contrôlez qui est une créature ou un véhicule.",
-				"type": "Créature légendaire : dragon et esprit"
-			}, {
-				"language": "Italian",
-				"multiverseId": 549512,
-				"name": "Ao, il Cielo allAlba",
-				"text": "Volare, cautelaQuando Ao, il Cielo allAlba muore, scegli uno —• Guarda le prime sette carte del tuo grimorio. Metti sul campo di battaglia un qualsiasi numero di carte permanente non terra con valore di mana totale pari o inferiore a 4 scelte tra esse. Metti le altre in fondo al tuo grimorio in ordine casuale.• Metti due segnalini +1/+1 su ogni permanente che controlli che è una creatura o un Veicolo.",
-				"type": "Creatura Leggendaria — Spirito Drago"
-			}, {
-				"language": "Japanese",
-				"multiverseId": 549817,
-				"name": "夜明けの空、猗旺",
-				"text": "飛行、警戒夜明けの空、猗旺が死亡したとき、以下から１つを選ぶ。・あなたのライブラリーの一番上にあるカード７枚を見る。その中から、土地でない望む枚数のパーマネント・カードをマナ総量の合計が４以下になるように選んで戦場に出す。残りをあなたのライブラリーの一番下に無作為の順番で置く。・あなたがコントロールしていてクリーチャーや機体である各パーマネントの上にそれぞれ＋１/＋１カウンター２個を置く。",
-				"type": "伝説のクリーチャー — ドラゴン・スピリット"
-			}, {
-				"language": "Korean",
-				"multiverseId": 550122,
-				"name": "새벽 하늘, 아오",
-				"text": "비행, 경계새벽 하늘, 아오가 죽을 때, 하나를 선택한다 —• 당신의 서고 맨 위 카드 일곱 장을 본다. 그 카드들 중에서 총 마나 값이 4이하가 되도록 대지가 아닌 지속물 카드를 원하는 수만큼 전장에 놓는다. 나머지 카드들은 무작위 순서로 당신의 서고 맨 밑에 놓는다.• 당신이 조종하며 생물이거나 탑승물인 각 지속물에 +1/+1 카운터를 두 개씩 올려놓는다.",
-				"type": "전설적 생물 — 용 신령"
-			}, {
-				"language": "Portuguese (Brazil)",
-				"multiverseId": 550427,
-				"name": "Ao, o Céu da Aurora",
-				"text": "Voar, vigilânciaQuando Ao, o Céu da Aurora, morrer, escolha um —• Olhe os sete cards do topo de seu grimório. Coloque qualquer número de cards de permanente não de terreno com valor de mana total igual ou inferior a 4 dentre eles no campo de batalha. Coloque o restante no fundo de seu grimório em ordem aleatória.• Coloque dois marcadores +1/+1 em cada permanente que você controla que seja uma criatura ou um Veículo.",
-				"type": "Criatura Lendária — Dragão Espírito"
-			}, {
-				"language": "Russian",
-				"multiverseId": 550732,
-				"name": "Ао, Рассветное Небо",
-				"text": "Полет, БдительностьКогда Ао, Рассветное Небо умирает, выберите одно —• Посмотрите семь верхних карт вашей библиотеки. Положите на поле битвы любое количество находящихся среди них карт не являющихся землями перманентов с суммарной мановой ценностью не более 4. Положите остальные карты в низ вашей библиотеки в случайном порядке.• Положите по два жетона +1/+1 на каждый перманент под вашим контролем, который является существом или Машиной.",
-				"type": "Легендарное Существо — Дракон Дух"
-			}, {
-				"language": "Chinese Simplified",
-				"multiverseId": 551037,
-				"name": "澄穹猗旺",
-				"text": "飞行，警戒当澄穹猗旺死去时，选择一项～•检视你牌库顶的七张牌。将其中任意数量的非地永久物牌放进战场，且这些牌的法术力值总和须等于或小于4。将其余的牌以随机顺序置于你的牌库底。•在每个由你操控的生物或载具永久物上各放置两个+1/+1指示物。",
-				"type": "传奇生物 ～龙／精怪"
-			}, {
-				"language": "Chinese Traditional",
-				"multiverseId": 551342,
-				"name": "澄穹猗旺",
-				"text": "飛行，警戒當澄穹猗旺死去時，選擇一項～•檢視你牌庫頂的七張牌。將其中任意數量的非地永久物牌放進戰場，且這些牌的魔法力值總和須等於或小於4。將其餘的牌以隨機順序置於你的牌庫底。•在每個由你操控的生物或載具永久物上各放置兩個+1/+1指示物。",
-				"type": "傳奇生物 ～龍／精靈"
-			}],
 			"frameEffects": ["legendary"],
 			"frameVersion": "2015",
 			"hasFoil": true,
@@ -1322,77 +1200,6 @@ NEO = `[{
 			"edhrecRank": 7372,
 			"finishes": ["nonfoil", "foil"],
 			"flavorText": "In the name of Kyodai, begone!",
-			"foreignData": [{
-				"flavorText": "„Im Namen von Kyodai, hinfort!",
-				"language": "German",
-				"multiverseId": 548598,
-				"name": "Bannender Schnitt",
-				"text": "Zerstöre bis zu ein Artefakt, eine Verzauberung oder eine getappte Kreatur deiner Wahl. Falls du dann ein Artefakt und eine Verzauberung kontrollierst, erzeuge einen 2/2 weißen Samurai-Kreaturenspielstein mit Wachsamkeit.",
-				"type": "Hexerei"
-			}, {
-				"flavorText": "En nombre de Kyodai... ¡desaparece!.",
-				"language": "Spanish",
-				"multiverseId": 548903,
-				"name": "Corte desvanecedor",
-				"text": "Destruye hasta un artefacto, encantamiento o criatura girada objetivo. Luego, si controlas un artefacto y un encantamiento, crea una ficha de criatura Samurái blanca 2/2 con la habilidad de vigilancia.",
-				"type": "Conjuro"
-			}, {
-				"flavorText": "« Au nom de Kyodai, disparais ! »",
-				"language": "French",
-				"multiverseId": 549208,
-				"name": "Balafre de bannissement",
-				"text": "Détruisez jusquà un artefact ciblé, un enchantement ciblé ou une créature engagée ciblée. Puis, si vous contrôlez un artefact et un enchantement, créez un jeton de créature blanche 2/2 Samouraï avec la vigilance.",
-				"type": "Rituel"
-			}, {
-				"flavorText": "In nome di Kyodai, sparisci!",
-				"language": "Italian",
-				"multiverseId": 549513,
-				"name": "Fendente Esiliatore",
-				"text": "Distruggi fino a un artefatto, un incantesimo o una creatura TAPpata bersaglio. Poi, se controlli un artefatto e un incantesimo, crea una pedina creatura Samurai 2/2 bianca con cautela.",
-				"type": "Stregoneria"
-			}, {
-				"flavorText": "「香醍の名のもとに、去ね！」",
-				"language": "Japanese",
-				"multiverseId": 549818,
-				"name": "払拭の斬撃",
-				"text": "アーティファクトやエンチャントやタップ状態のクリーチャーのうち最大１つを対象とする。それを破壊する。その後、あなたがアーティファクトとエンチャントをコントロールしているなら、警戒を持つ白の２/２の侍・クリーチャー・トークン１体を生成する。",
-				"type": "ソーサリー"
-			}, {
-				"flavorText": "쿄다이의 이름으로 명하니, 사라져라!",
-				"language": "Korean",
-				"multiverseId": 550123,
-				"name": "추방하는 베기",
-				"text": "마법물체, 부여마법, 또는 탭된 생물을 최대 한 개까지 목표로 정한다. 그 목표를 파괴한다. 그 후 당신이 마법물체 및 부여마법을 조종한다면, 경계를 가진 2/2 백색 사무라이 생물 토큰 한 개를 만든다.",
-				"type": "집중마법"
-			}, {
-				"flavorText": "Em nome de Kyodai, suma!",
-				"language": "Portuguese (Brazil)",
-				"multiverseId": 550428,
-				"name": "Cutilada Banidora",
-				"text": "Destrua até um artefato, encantamento ou criatura virada alvo. Depois, se você controlar um artefato e um encantamento, crie uma ficha de criatura Samurai branca 2/2 com vigilância.",
-				"type": "Feitiço"
-			}, {
-				"flavorText": "«Изыди, во имя Кёдай!»",
-				"language": "Russian",
-				"multiverseId": 550733,
-				"name": "Изгоняющий Удар",
-				"text": "Уничтожьте не более одного целевого артефакта, чар или повернутого существа. Затем, если вы контролируете артефакт и чары, создайте одну фишку существа 2/2 белый Самурай с Бдительностью.",
-				"type": "Волшебство"
-			}, {
-				"flavorText": "「以香醍之名，速速退散！」",
-				"language": "Chinese Simplified",
-				"multiverseId": 551038,
-				"name": "驱灵斩",
-				"text": "消灭至多一个目标神器，结界或已横置的生物。然后如果你同时操控神器和结界，则派出一个2/2白色，具警戒异能的武士衍生生物。",
-				"type": "法术"
-			}, {
-				"flavorText": "「以香醍之名，速速退散！」",
-				"language": "Chinese Traditional",
-				"multiverseId": 551343,
-				"name": "驅靈斬",
-				"text": "消滅至多一個目標神器，結界或已橫置的生物。然後如果你同時操控神器和結界，則派出一個2/2白色，具警戒異能的武士衍生生物。",
-				"type": "巫術"
-			}],
 			"frameVersion": "2015",
 			"hasFoil": true,
 			"hasNonFoil": true,
@@ -1471,7 +1278,6 @@ NEO = `[{
 			"faceManaValue": 4.0,
 			"faceName": "Befriending the Moths",
 			"finishes": ["nonfoil", "foil"],
-			"foreignData": [],
 			"frameVersion": "2015",
 			"hasFoil": true,
 			"hasNonFoil": true,
@@ -1660,77 +1466,6 @@ NEO = `[{
 			"edhrecRank": 14956,
 			"finishes": ["nonfoil", "foil"],
 			"flavorText": "In the time it takes most to master one blade, he mastered two.",
-			"foreignData": [{
-				"flavorText": "In der Zeit, die die meisten brauchen, um eine Klinge zu beherrschen, meisterte er zwei.",
-				"language": "German",
-				"multiverseId": 548601,
-				"name": "Klingenblizzard-Kitsune",
-				"text": "Ninjutsu {3}{W} ({3}{W}, bringe einen ungeblockten Angreifer, den du kontrollierst, auf die Hand zurück: Bringe diese Karte aus deiner Hand getappt und angreifend ins Spiel.)Doppelschlag",
-				"type": "Kreatur — Fuchs, Ninja"
-			}, {
-				"flavorText": "En lo que tardan la mayoría en blandir una espada a la perfección, él blandió dos.",
-				"language": "Spanish",
-				"multiverseId": 548906,
-				"name": "Kitsune de la tormenta de cortes",
-				"text": "Ninjutsu {3}{W}. ({3}{W}, regresar un atacante no bloqueado que controlas a la mano de su propietario: Pon esta carta en el campo de batalla de tu mano girada y atacando.)Daña dos veces.",
-				"type": "Criatura — Ninja zorro"
-			}, {
-				"flavorText": "Il maîtrisa lart des deux lames dans le temps quil faudrait à quiconque dapprendre à en maîtriser une.",
-				"language": "French",
-				"multiverseId": 549211,
-				"name": "Kitsune blizzard de lames",
-				"text": "Ninjutsu {3}{W} ({3}{W}, renvoyez en main un attaquant non-bloqué que vous contrôlez : Mettez sur le champ de bataille cette carte, engagée et attaquante, depuis votre main.)Double initiative",
-				"type": "Créature : renard et ninja"
-			}, {
-				"flavorText": "Nel tempo in cui la maggior parte dei guerrieri padroneggia luso di una spada, lui ne ha padroneggiate due.",
-				"language": "Italian",
-				"multiverseId": 549516,
-				"name": "Kitsune della Tempesta di Lame",
-				"text": "Ninjutsu {3}{W} ({3}{W}, Fai tornare in mano al suo proprietario una creatura attaccante non bloccata che controlli: Metti questa carta sul campo di battaglia dalla tua mano TAPpata e attaccante.)Doppio attacco",
-				"type": "Creatura — Ninja Volpe"
-			}, {
-				"flavorText": "ほとんどの人が一刀を習得する間に、彼は二刀を習得した。",
-				"language": "Japanese",
-				"multiverseId": 549821,
-				"name": "刃吹雪の狐",
-				"text": "忍術{3}{W}（{3}{W}, あなたがコントロールしていてブロックされなかった攻撃クリーチャー１体を手札に戻す：あなたの手札にあるこのカードをタップ状態かつ攻撃している状態で戦場に出す。）二段攻撃",
-				"type": "クリーチャー — 狐・忍者"
-			}, {
-				"flavorText": "대부분의 사람이 한 검술의 대가가 되는 데 들이는 시간 동안, 그는 둘에 통달했다.",
-				"language": "Korean",
-				"multiverseId": 550126,
-				"name": "칼날눈보라 키츠네",
-				"text": "인술 {3}{W} ({3}{W}, 당신이 조종하는 공격 중인 생물 중 방어 당하지 않은 생물 한 개를 손으로 되돌린다: 당신의 손에서 이 카드를 탭되어 공격 중인 상태로 전장에 놓는다.)이단공격",
-				"type": "생물 — 여우 닌자"
-			}, {
-				"flavorText": "No tempo que a maioria leva para dominar uma lâmina, ele dominou duas.",
-				"language": "Portuguese (Brazil)",
-				"multiverseId": 550431,
-				"name": "Kitsune da Tempestade de Lâminas",
-				"text": "Ninjutsu {3}{W} ({3}{W}, devolva para a mão um atacante não bloqueado que você controla: Coloque este card no campo de batalha de sua mão, virado e atacando.)Golpe duplo",
-				"type": "Criatura — Raposa Ninja"
-			}, {
-				"flavorText": "За время, которое большинству требуется, чтобы овладеть одним клинком, он овладел двумя.",
-				"language": "Russian",
-				"multiverseId": 550736,
-				"name": "Кицунэ Бури Клинков",
-				"text": "Ниндзюцу {3}{W} ({3}{W}, верните незаблокированного атакующего под вашим контролем в руку: положите эту карту на поле битвы из вашей руки повернутой и атакующей.)Двойной удар",
-				"type": "Существо — Лиса Ниндзя"
-			}, {
-				"flavorText": "这训练时间大多数人能舞好单剑已属不易，他却能将双刀运用自如。",
-				"language": "Chinese Simplified",
-				"multiverseId": 551041,
-				"name": "凛剑狐族",
-				"text": "忍术{3}{W}（{3}{W}，将一个由你操控且未受阻挡的攻击生物移回其拥有者手上：将此牌从你手上横置放进战场，且正进行攻击。）连击",
-				"type": "生物 ～狐／忍者"
-			}, {
-				"flavorText": "這訓練時間大多數人能舞好單劍已屬不易，他卻能將雙刀運用自如。",
-				"language": "Chinese Traditional",
-				"multiverseId": 551346,
-				"name": "凜劍狐族",
-				"text": "忍術{3}{W}（{3}{W}，將一個由你操控且未受阻擋的攻擊生物移回其擁有者手上：將此牌從你手上橫置放進戰場，且正進行攻擊。）連擊",
-				"type": "生物 ～狐／忍者"
-			}],
 			"frameVersion": "2015",
 			"hasFoil": true,
 			"hasNonFoil": true,
