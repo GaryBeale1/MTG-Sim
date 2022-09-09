@@ -184,11 +184,12 @@
 			"SNC": false
 		}
 
-		var rareArr
-		var uncommonArr
-		var commonUncommonArr
-		var commonArr
-		var landArr
+		var rareArr = []
+		var foilArr = []
+		var uncommonArr = []
+		var commonUncommonArr = []
+		var commonArr = []
+		var landArr = []
 		var inventoryArr = []
 
 		$(document).ready(function(){
@@ -289,25 +290,35 @@
 		})	
 
 		$('#draftBoosterPurchase').on('click', function()
-		{			
-			var unlockedPackArr = Object.entries(unlockedPacks)
-			unlockedPackArr.forEach(function (arrayItem, index) {
-				if (arrayItem[1] == false){
-					unlockedPackArr.splice(index, 1)
-				}
-			})
-			var packToOpen = unlockedPackArr[getRandomInt(unlockedPackArr.length)][0]
+		{		
+			if (count > 4) {
+				count = count - 4	
+				var unlockedPackArr = Object.entries(unlockedPacks)
+				unlockedPackArr.forEach(function (arrayItem, index) {
+					if (arrayItem[1] == false){
+						unlockedPackArr.splice(index, 1)
+					}
+				})
+				var packToOpen = unlockedPackArr[getRandomInt(unlockedPackArr.length)][0]
 
-			switch(packToOpen)
-			{
-				case "NEO":
-					openNeo()
-					break
+				rareArr = []
+				foilArr = []
+				uncommonArr = []
+				commonUncommonArr = []
+				commonArr = []
+				landArr = []
 
-				case "SNC":
-					openSnc()
-					break
+				switch(packToOpen)
+				{
+					case "NEO":
+						openNeo()
+						break
 
+					case "SNC":
+						openSnc()
+						break
+
+				}				
 			}
 		})
 
@@ -315,50 +326,167 @@
 		//Add key, value func to set weight
 		async function openNeo()
 		{
-			if (count > 4) {
-				$('#packPurchaseModal').modal('hide');
-				cards = NeoCards
-				rareArr = Object.entries(cards[0].data.booster.default.sheets.rareMythic.cards)
-				uncommonArr = Object.entries(cards[0].data.booster.default.sheets.uncommon.cards)
-				commonUncommonArr = Object.entries(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
-				commonArr = Object.entries(cards[0].data.booster.default.sheets.common.cards)
-				landArr = Object.entries(cards[0].data.booster.default.sheets.land.cards)
+			
+			$('#packPurchaseModal').modal('hide');
+			cards = NeoCards
+			var types = Object.keys(cards[0].data.booster.default.sheets.rareMythic.cards)
+			var freq = Object.values(cards[0].data.booster.default.sheets.rareMythic.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					rareArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
 
-				$('#cardModal').modal('show')
-				$('#closeModalButton').css('display', 'none')
-				$('#nextCardButton').css('display', 'inline-block')
-				count = count - 4
-				updateMoney()
-				getPackCards()
-				populateModal()	
-			}		
+			types = Object.keys(cards[0].data.booster.default.sheets.uncommon.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.uncommon.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					uncommonArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			types = Object.keys(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					commonUncommonArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			types = Object.keys(cards[0].data.booster.default.sheets.foil.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.foil.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					foilArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			types = Object.keys(cards[0].data.booster.default.sheets.common.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.common.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					commonArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			types = Object.keys(cards[0].data.booster.default.sheets.land.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.land.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					landArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			$('#cardModal').modal('show')
+			$('#closeModalButton').css('display', 'none')
+			$('#nextCardButton').css('display', 'inline-block')
+			
+			updateMoney()
+			getPackCards()
+			populateModal()			
 
 		}
 
 		async function openSnc()
 		{
-			if (count > 4) {
-				$('#packPurchaseModal').modal('hide');
-				cards = SncCards
-				rareArr = Object.entries(cards[0].data.booster.default.sheets.rareMythic.cards)
-				uncommonArr = Object.entries(cards[0].data.booster.default.sheets.uncommon.cards)
-				commonUncommonArr = Object.entries(cards[0].data.booster.default.sheets.foil.cards)
-				commonArr = Object.entries(cards[0].data.booster.default.sheets.common.cards)
-				landArr = Object.entries(cards[0].data.booster.default.sheets.basic.cards)
+			$('#packPurchaseModal').modal('hide');
+			cards = SncCards
+			var rareCardList = Object.entries(cards[0].data.booster.default.sheets.rareMythic.cards)
+			var types = Object.keys(cards[0].data.booster.default.sheets.rareMythic.cards)
+			var freq = Object.values(cards[0].data.booster.default.sheets.rareMythic.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					rareArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
 
-				$('#cardModal').modal('show')
-				$('#closeModalButton').css('display', 'none')
-				$('#nextCardButton').css('display', 'inline-block')
-				count = count - 4
-				updateMoney()
-				getPackCards()
-				populateModal()	
-			}		
+			types = Object.keys(cards[0].data.booster.default.sheets.uncommon.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.uncommon.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					uncommonArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
 
-		}
+			types = Object.keys(cards[0].data.booster.default.sheets.foil.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.foil.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					foilArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			types = Object.keys(cards[0].data.booster.default.sheets.common.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.common.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					commonArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			types = Object.keys(cards[0].data.booster.default.sheets.basic.cards)
+			freq = Object.values(cards[0].data.booster.default.sheets.basic.cards)
+			while (freq[0] != undefined){
+				if (freq[0] > 0){
+					landArr.push(types[0])
+					freq[0]--
+				} else {
+					freq.shift()
+					types.shift()
+				}
+			}
+
+			$('#cardModal').modal('show')
+			$('#closeModalButton').css('display', 'none')
+			$('#nextCardButton').css('display', 'inline-block')
+			count = count - 4
+			updateMoney()
+			getPackCards()
+			populateModal()	
+		}		
 
 		async function getUncommonCard() {
-			cardId = uncommonArr[getRandomInt(uncommonArr.length)][0]
+			cardId = uncommonArr[getRandomInt(uncommonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal)
@@ -368,7 +496,7 @@
 		}
 
 		async function getCommonUncommonCard() {
-			cardId = commonUncommonArr[getRandomInt(commonUncommonArr.length)][0]
+			cardId = commonUncommonArr[getRandomInt(commonUncommonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		if (data.card_faces != undefined) {
@@ -388,7 +516,7 @@
 		}
 
 		async function getCommonCard() {
-			cardId = commonArr[getRandomInt(commonArr.length)][0]
+			cardId = commonArr[getRandomInt(commonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal)
@@ -398,7 +526,7 @@
 		}
 
 		async function getLandCard() {
-			cardId = landArr[getRandomInt(landArr.length)][0]
+			cardId = landArr[getRandomInt(landArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal) 
@@ -407,8 +535,29 @@
 			});	
 		}
 
+		async function getFoilCard() {
+			cardId = foilArr[getRandomInt(foilArr.length)]
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
+		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+		  		if (data.card_faces != undefined) {
+		  			flip = data.card_faces
+		  			inventData.doubleFaceCard = true
+		  			inventData.secondImgLink = data.card_faces[1].image_uris.normal
+		  			inventData.smallImgSrc = data.card_faces[0].image_uris.small
+					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
+					$('#priceValue').text(data.prices.usd)
+					$('#flipCard').css('visibility', 'visible');
+				} else {
+					$('#packOpeningCards').prop('src',data.image_uris.normal)
+					inventData.smallImgSrc = data.image_uris.small
+					$('#priceValue').text(data.prices.usd)
+				}
+				console.log('foil')
+			});	
+		}
+
 		async function getRareCard() {
-			cardId = rareArr[getRandomInt(rareArr.length)][0]
+			cardId = rareArr[getRandomInt(rareArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		if (data.card_faces != undefined) {
@@ -428,7 +577,7 @@
 		}
 
 		function getPackCards(){
-			pack = cards[0].data.booster.default.boosters[0].contents
+			pack = cards[0].data.booster.default.boosters[getRandomInt(cards[0].data.booster.default.boosters.length)].contents
 			types = Object.keys(pack)
 			freq = Object.values(pack)
 		}
@@ -456,6 +605,10 @@
 
 					case 'uncommon': 
 						await getUncommonCard()
+						break
+
+					case 'foil': 
+						await getFoilCard()
 						break
 
 					case 'rareMythic': 
