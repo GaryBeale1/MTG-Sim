@@ -3,7 +3,6 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="homeStyle.css">
-	<link rel="stylesheet" type="text/css" href="foundation.css">
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
 </head>
@@ -34,7 +33,12 @@
 		      <div class="modal-body" style="text-align: center;">		      		
 				<i class="fa fa-refresh modalElements" id="flipCard" style="cursor: pointer; display: block; margin-bottom: 10px;"></i>
 		        <img id="packOpeningCards"></img>
-		        <p id="cardPrice" class="modalElements">Price: $<span id="priceValue"></span></p>
+		        <p id="cardPrice" class="modalElements">
+		        	<span class="foil">✨</span>
+		        		Price: $
+		        		<span id="priceValue"></span>
+	        		<span class="foil">✨</span>
+	        	</p>
 		      </div>
 		      <div class="modal-footer">
 		      	<button type="button" id="sellCardButton" class="btn btn-secondary">Sell</button>
@@ -174,6 +178,7 @@
 		var pack, types, freq, flip, cards, cardId, saveData
 
 		var inventData = {
+			"foil": false,
 			"smallImgSrc":'', 
 			"doubleFaceCard": false,
 			"secondImgLink": ''
@@ -236,8 +241,10 @@
 
 		$('#nextCardButton').on('click', () =>
 		{
+			$('.foil').css('visibility','hidden')
 			addCardToInvent()
 			populateModal()	
+			inventData.foil = false
 			inventData.smallImgSrc = ''
 			inventData.doubleFaceCard = false	
 			inventData.secondImgLink = ''	
@@ -250,6 +257,8 @@
 
 		$('#sellCardButton').on('click', () =>
 		{
+			$('.foil').css('visibility','hidden')
+			inventData.foil = false
 			inventData.smallImgSrc = ''
 			inventData.doubleFaceCard = false
 			inventData.secondImgLink = ''
@@ -485,6 +494,7 @@
 			populateModal()	
 		}		
 
+		//NEED ALT ART CARD LOGIC (STOP OTHER PACK CARDS SHOWING UP)
 		async function getUncommonCard() {
 			cardId = uncommonArr[getRandomInt(uncommonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
@@ -515,15 +525,37 @@
 			});	
 		}
 
+		// async function getCommonCard() {
+		// 	cardId = commonArr[getRandomInt(commonArr.length)]
+		// 	let obj = cards[0].data.cards.find(o => o.uuid == cardId);
+		// 	if (obj?.variations) {
+		// 		cardId = obj?.variations[0]
+		// 	}
+		//   	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+		// 		$('#packOpeningCards').prop('src',data.image_uris.normal)
+		// 		inventData.smallImgSrc = data.image_uris.small
+		// 		$('#priceValue').text(data.prices.usd)
+		// 	});	
+		// }
+
 		async function getCommonCard() {
 			cardId = commonArr[getRandomInt(commonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
-		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-				$('#packOpeningCards').prop('src',data.image_uris.normal)
-				inventData.smallImgSrc = data.image_uris.small
-				$('#priceValue').text(data.prices.usd)
-			});	
+			$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+				$.get(data.prints_search_uri, function(imgData) {
+					console.log(imgData)
+					$('#packOpeningCards').prop('src', imgData.data[0].image_uris.normal)
+					$('#priceValue').text(imgData.data[0].prices.usd)
+				})
+			})
+		//   	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+		// 		$('#packOpeningCards').prop('src',data.image_uris.normal)
+		// 		inventData.smallImgSrc = data.image_uris.small
+		// 		$('#priceValue').text(data.prices.usd)
+		// 	});	
 		}
+
+
 
 		async function getLandCard() {
 			cardId = landArr[getRandomInt(landArr.length)]
@@ -536,23 +568,25 @@
 		}
 
 		async function getFoilCard() {
+			$('.foil').css('visibility','visible')
 			cardId = foilArr[getRandomInt(foilArr.length)]
-			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);			
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		if (data.card_faces != undefined) {
 		  			flip = data.card_faces
 		  			inventData.doubleFaceCard = true
+		  			inventData.foil = true
 		  			inventData.secondImgLink = data.card_faces[1].image_uris.normal
 		  			inventData.smallImgSrc = data.card_faces[0].image_uris.small
 					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
-					$('#priceValue').text(data.prices.usd)
+					$('#priceValue').text(data.prices.usd_foil)
 					$('#flipCard').css('visibility', 'visible');
 				} else {
 					$('#packOpeningCards').prop('src',data.image_uris.normal)
 					inventData.smallImgSrc = data.image_uris.small
-					$('#priceValue').text(data.prices.usd)
+					inventData.foil = true
+					$('#priceValue').text(data.prices.usd_foil)
 				}
-				console.log('foil')
 			});	
 		}
 
@@ -633,12 +667,17 @@
 			$( ".cardCol" ).remove();
 			inventoryArr.forEach(function (arrayItem) {
 				str = arrayItem.uuid.replace(/\s/g, '');
+				if (arrayItem.foil) {
+					var foilHtml = '<span>✨</span>'
+				} else {
+					var foilHtml = '<span></span>'
+				}
     			$(".row-cols-4").append(`<div class="col cardCol">
     										<div class="card">
 										      <img src="`+arrayItem.imgLink.small+`" class="card-img-top" onclick=openImage("`+arrayItem.imgLink.normal+`",`+arrayItem.dfc+`,"`+arrayItem.imgLink.secondFace+`")>
 										      <div class="card-body" onclick=sellInventCard("`+str+`")>
 										        <h5 class="card-title">Quantity: `+arrayItem.qty+`</h5>
-										        <p class="card-text">Sell For $`+arrayItem.price.toFixed(2)+`</p>
+										        <p class="card-text">`+foilHtml+`Sell For $`+arrayItem.price.toFixed(2)+` `+foilHtml+`</p>
 										      </div>
 										    </div>
 										  </div>`);
@@ -653,9 +692,10 @@
 			}
 		}
 
+		//NEEDS FOIL LOGIC
 		function addCardToInvent() {
-			var search = inventoryArr.map(e => e.uuid).indexOf(cardId);
-			if (search == -1) {
+			var search = inventoryArr.filter(card => card.uuid == cardId && card.foil == inventData.foil)
+			if (search.length == 0) {
 				var currentCard= {
 					imgLink: {
 						normal: $('#packOpeningCards').attr('src'),
@@ -663,13 +703,15 @@
 						secondFace: inventData.secondImgLink
 					},
 					dfc: inventData.doubleFaceCard,
+					foil: inventData.foil,
 					uuid: cardId,
 					qty:1,
 					price: parseFloat($('#priceValue').text())
 				}
 				inventoryArr.push(currentCard)
 			} else {
-				inventoryArr[search].qty++ 
+				var pos = inventoryArr.indexOf(search[0])
+				inventoryArr[pos].qty++
 			}
 		}
 
