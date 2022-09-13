@@ -94,8 +94,8 @@
 		    		</tr>
 		    		<tr>
 		    			<td>Increase Money per Second</td>
-		    			<td>$5.00</td>
-		    			<td><button onclick="increaseMPS(5)">Buy</button></td>
+		    			<td id="increaseMpsLabel">$5.00</td>
+		    			<td><button onclick="increaseMPS()">Buy</button></td>
 		    		</tr>
 		    		<tr>
 		    			<td>Unlock New Capenna Draft Packs</td>
@@ -168,6 +168,7 @@
   		crossorigin="anonymous">  			
   		</script>
 		<script type="text/javascript" src="NEO.js"></script>
+		<script type="text/javascript" src="jquery.blockUI.js"></script>
 		<script type="text/javascript" src="SNC.js"></script>
 		<script type="text/javascript">
 
@@ -175,13 +176,16 @@
 		var mps = 0.0000
 		var NeoCards = JSON.parse(NEO);
 		var SncCards = JSON.parse(SNC);
-		var pack, types, freq, flip, cards, cardId, saveData
+		var pack, types, freq, flip, cards, cardId, saveData, packToOpen
+		var price = 5
 
 		var inventData = {
 			"foil": false,
 			"smallImgSrc":'', 
 			"doubleFaceCard": false,
-			"secondImgLink": ''
+			"secondImgLink": '',
+			"colorType": '',
+			"cardType": '',
 		}
 
 		var unlockedPacks = {
@@ -206,10 +210,12 @@
 			}, 1000);
 		})
 
-		function increaseMPS(price) {
+		function increaseMPS() {
 			if (count > price) {
 				count = count - price
 				mps = mps+0.0005
+				price = Math.round(price * 1.2)
+				$('#increaseMpsLabel').text('$'+price+'.00')
 				updateMoney()
 			}
 		}
@@ -247,7 +253,8 @@
 			inventData.foil = false
 			inventData.smallImgSrc = ''
 			inventData.doubleFaceCard = false	
-			inventData.secondImgLink = ''	
+			inventData.secondImgLink = ''
+			$.blockUI()	
 		})
 
 		$('#closeModalButton').on('click', () =>
@@ -301,6 +308,7 @@
 		$('#draftBoosterPurchase').on('click', function()
 		{		
 			if (count > 4) {
+				$.blockUI()
 				count = count - 4	
 				var unlockedPackArr = Object.entries(unlockedPacks)
 				unlockedPackArr.forEach(function (arrayItem, index) {
@@ -308,7 +316,7 @@
 						unlockedPackArr.splice(index, 1)
 					}
 				})
-				var packToOpen = unlockedPackArr[getRandomInt(unlockedPackArr.length)][0]
+				packToOpen = unlockedPackArr[getRandomInt(unlockedPackArr.length)][0]
 
 				rareArr = []
 				foilArr = []
@@ -494,14 +502,24 @@
 			populateModal()	
 		}		
 
-		//NEED ALT ART CARD LOGIC (STOP OTHER PACK CARDS SHOWING UP)
+		//IMPLEMENT RANDOM CHANCE FOR ALL CARDS/PRICE FALLBACK
 		async function getUncommonCard() {
 			cardId = uncommonArr[getRandomInt(uncommonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-				$('#packOpeningCards').prop('src',data.image_uris.normal)
-				inventData.smallImgSrc = data.image_uris.small
-				$('#priceValue').text(data.prices.usd)
+				$.get(data.prints_search_uri, function(imgData) {
+					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
+					if (getRandomInt(100)<5){
+						var selector = getRandomInt(imgData.data.length - 1)
+					} else {
+						var selector = imgData.data.length - 1
+					}
+					console.log(imgData)
+					$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
+					$('#priceValue').text(imgData.data[selector].prices.usd)
+					inventData.smallImgSrc = imgData.data[selector].image_uris.small
+					$.unblockUI()
+				})
 			});	
 		}
 
@@ -509,53 +527,48 @@
 			cardId = commonUncommonArr[getRandomInt(commonUncommonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-		  		if (data.card_faces != undefined) {
-		  			flip = data.card_faces
-		  			inventData.doubleFaceCard = true
-		  			inventData.secondImgLink = data.card_faces[1].image_uris.normal
-		  			inventData.smallImgSrc = data.card_faces[0].image_uris.small
-					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
-					$('#priceValue').text(data.prices.usd)
-					$('#flipCard').css('visibility', 'visible');
-				} else {
-					inventData.smallImgSrc = data.image_uris.small
-					$('#packOpeningCards').prop('src',data.image_uris.normal)
-					$('#priceValue').text(data.prices.usd)
-				}
+		  		$.get(data.prints_search_uri, function(imgData) {
+		  			imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
+		  			console.log(imgData)
+		  			if (imgData.data[0].card_faces != undefined) {
+			  			flip = imgData.data[0].card_faces
+			  			inventData.doubleFaceCard = true
+			  			inventData.secondImgLink = imgData.data[0].card_faces[1].image_uris.normal
+			  			inventData.smallImgSrc = imgData.data[0].card_faces[0].image_uris.small
+						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
+						$('#priceValue').text(imgData.data[0].prices.usd)
+						$('#flipCard').css('visibility', 'visible');
+						$.unblockUI()
+					} else {
+						inventData.smallImgSrc = data.image_uris.small
+						$('#packOpeningCards').prop('src',data.image_uris.normal)
+						$('#priceValue').text(imgData.data[0].prices.usd)
+						$.unblockUI()
+					}
+		  		})		  		
 			});	
 		}
 
-		// async function getCommonCard() {
-		// 	cardId = commonArr[getRandomInt(commonArr.length)]
-		// 	let obj = cards[0].data.cards.find(o => o.uuid == cardId);
-		// 	if (obj?.variations) {
-		// 		cardId = obj?.variations[0]
-		// 	}
-		//   	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-		// 		$('#packOpeningCards').prop('src',data.image_uris.normal)
-		// 		inventData.smallImgSrc = data.image_uris.small
-		// 		$('#priceValue').text(data.prices.usd)
-		// 	});	
-		// }
-
 		async function getCommonCard() {
+			$.blockUI()
 			cardId = commonArr[getRandomInt(commonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 			$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$.get(data.prints_search_uri, function(imgData) {
+					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
+					if (getRandomInt(100)<5){
+						var selector = getRandomInt(imgData.data.length - 1)
+					} else {
+						var selector = imgData.data.length - 1
+					}
 					console.log(imgData)
-					$('#packOpeningCards').prop('src', imgData.data[0].image_uris.normal)
-					$('#priceValue').text(imgData.data[0].prices.usd)
+					$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
+					$('#priceValue').text(imgData.data[selector].prices.usd)
+					inventData.smallImgSrc = imgData.data[selector].image_uris.small
+					$.unblockUI()
 				})
 			})
-		//   	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-		// 		$('#packOpeningCards').prop('src',data.image_uris.normal)
-		// 		inventData.smallImgSrc = data.image_uris.small
-		// 		$('#priceValue').text(data.prices.usd)
-		// 	});	
 		}
-
-
 
 		async function getLandCard() {
 			cardId = landArr[getRandomInt(landArr.length)]
@@ -563,7 +576,8 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$('#packOpeningCards').prop('src',data.image_uris.normal) 
 				inventData.smallImgSrc = data.image_uris.small
-				$('#priceValue').text(data.prices.usd)   				
+				$('#priceValue').text(data.prices.usd) 
+				$.unblockUI()  				
 			});	
 		}
 
@@ -572,43 +586,50 @@
 			cardId = foilArr[getRandomInt(foilArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);			
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-		  		if (data.card_faces != undefined) {
-		  			flip = data.card_faces
-		  			inventData.doubleFaceCard = true
-		  			inventData.foil = true
-		  			inventData.secondImgLink = data.card_faces[1].image_uris.normal
-		  			inventData.smallImgSrc = data.card_faces[0].image_uris.small
-					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
-					$('#priceValue').text(data.prices.usd_foil)
-					$('#flipCard').css('visibility', 'visible');
-				} else {
-					$('#packOpeningCards').prop('src',data.image_uris.normal)
-					inventData.smallImgSrc = data.image_uris.small
-					inventData.foil = true
-					$('#priceValue').text(data.prices.usd_foil)
-				}
-			});	
+		  		$.get(data.prints_search_uri, function(imgData) {
+		  			imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
+		  			console.log(imgData)
+		  			if (imgData.data[0].card_faces != undefined) {
+			  			flip = imgData.data[0].card_faces
+			  			inventData.doubleFaceCard = true
+			  			inventData.secondImgLink = imgData.data[0].card_faces[1].image_uris.normal
+			  			inventData.smallImgSrc = imgData.data[0].card_faces[0].image_uris.small
+						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
+						$('#priceValue').text(imgData.data[0].prices.usd)
+						$('#flipCard').css('visibility', 'visible');
+						$.unblockUI()
+					} else {
+						inventData.smallImgSrc = data.image_uris.small
+						$('#packOpeningCards').prop('src',data.image_uris.normal)
+						$('#priceValue').text(imgData.data[0].prices.usd)
+						$.unblockUI()
+					}
+		  		})		  		
+			});
 		}
 
 		async function getRareCard() {
 			cardId = rareArr[getRandomInt(rareArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-		  		if (data.card_faces != undefined) {
-		  			flip = data.card_faces
-		  			inventData.doubleFaceCard = true
-		  			inventData.secondImgLink = data.card_faces[1].image_uris.normal
-		  			inventData.smallImgSrc = data.card_faces[0].image_uris.small
-					$('#packOpeningCards').prop('src',data.card_faces[0].image_uris.normal)
-					$('#priceValue').text(data.prices.usd)
-					$('#flipCard').css('visibility', 'visible');
-				} else {
-					$('#packOpeningCards').prop('src',data.image_uris.normal)
-					inventData.smallImgSrc = data.image_uris.small
-					$('#priceValue').text(data.prices.usd)
-				}
-			});	
-		}
+				$.get(data.prints_search_uri, function(imgData) {
+					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
+					console.log(imgData)
+					if (imgData.data[0].card_faces != undefined) {						
+			  			inventData.secondImgLink = imgData.data[0].card_faces[1].image_uris.normal
+			  			inventData.smallImgSrc = imgData.data[0].card_faces[0].image_uris.small
+						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
+						$('#priceValue').text(data.prices.usd)
+						$('#flipCard').css('visibility', 'visible');
+					} else {
+						$('#packOpeningCards').prop('src', imgData.data[0].image_uris.normal)
+						$('#priceValue').text(imgData.data[0].prices.usd)
+						inventData.smallImgSrc = imgData.data[0].image_uris.small
+						$.unblockUI()
+					}
+				})
+			})
+	  	}		
 
 		function getPackCards(){
 			pack = cards[0].data.booster.default.boosters[getRandomInt(cards[0].data.booster.default.boosters.length)].contents
