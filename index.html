@@ -97,12 +97,12 @@
 		    			<td id="increaseMpsLabel">$5.00</td>
 		    			<td><button onclick="increaseMPS()">Buy</button></td>
 		    		</tr>
-		    		<tr>
+		    		<tr id='SNC'>
 		    			<td>Unlock New Capenna Draft Packs</td>
 		    			<td>$10.00</td>
 		    			<td><button onclick="unlockNewPack('SNC', 10)">Buy</button></td>
 		    		</tr>
-		    		<tr>
+		    		<tr id='DMU'>
 		    			<td>Unlock Dominaria United Draft Packs</td>
 		    			<td>$20.00</td>
 		    			<td><button onclick="unlockNewPack('DMU', 20)">Buy</button></td>
@@ -219,7 +219,7 @@
 		})
 
 		function increaseMPS() {
-			if (count > price) {
+			if (count >= price) {
 				count = count - price
 				mps = mps+0.0005
 				price = Math.round(price * 1.2)
@@ -229,10 +229,11 @@
 		}
 
 		function unlockNewPack(pack, price) {
-			if (count > price) {
+			if (count >= price) {
 				count = count - price
 				updateMoney()
 				unlockedPacks[pack] = true
+				$("#"+pack).remove()
 			}
 		}
 
