@@ -368,7 +368,7 @@ NEO = `[{
 			"default": {
 				"boosters": [{
 					"contents": {						
-						"land": 1,						
+						"basic": 1,						
 						"common": 9,
 						"dfcCommonUncommon": 1,
 						"uncommon": 3,
@@ -377,7 +377,7 @@ NEO = `[{
 					"weight": 2
 				}, {
 					"contents": {	
-						"land": 1,						
+						"basic": 1,						
 						"common": 8,
 						"dfcCommonUncommon": 1,
 						"uncommon": 3,						
@@ -716,7 +716,7 @@ NEO = `[{
 						"foil": true,
 						"totalWeight": 4099040
 					},
-					"land": {
+					"basic": {
 						"cards": {
 							"1679f14d-7893-50dd-be2e-898cd7cc617d": 1,
 							"182c88fe-257b-57e0-9cfc-e6210569b3b4": 1,

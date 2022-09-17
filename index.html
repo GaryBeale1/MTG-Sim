@@ -102,6 +102,11 @@
 		    			<td>$10.00</td>
 		    			<td><button onclick="unlockNewPack('SNC', 10)">Buy</button></td>
 		    		</tr>
+		    		<tr>
+		    			<td>Unlock Dominaria United Draft Packs</td>
+		    			<td>$20.00</td>
+		    			<td><button onclick="unlockNewPack('DMU', 20)">Buy</button></td>
+		    		</tr>
 		    	</table>	      		
 		      </div>
 		      <div class="modal-footer">
@@ -170,12 +175,14 @@
 		<script type="text/javascript" src="NEO.js"></script>
 		<script type="text/javascript" src="jquery.blockUI.js"></script>
 		<script type="text/javascript" src="SNC.js"></script>
+		<script type="text/javascript" src="DMU.js"></script>
 		<script type="text/javascript">
 
 		var count = 10;
 		var mps = 0.0000
 		var NeoCards = JSON.parse(NEO);
 		var SncCards = JSON.parse(SNC);
+		var DmuCards = JSON.parse(DMU)
 		var pack, types, freq, flip, cards, cardId, saveData, packToOpen
 		var price = 5
 
@@ -184,13 +191,14 @@
 			"smallImgSrc":'', 
 			"doubleFaceCard": false,
 			"secondImgLink": '',
-			"colorType": '',
+			"colourType": '',
 			"cardType": '',
 		}
 
 		var unlockedPacks = {
 			"NEO": true,
-			"SNC": false
+			"SNC": false,
+			"DMU": false
 		}
 
 		var rareArr = []
@@ -248,12 +256,15 @@
 		$('#nextCardButton').on('click', () =>
 		{
 			$('.foil').css('visibility','hidden')
+			console.log(inventData)
 			addCardToInvent()
 			populateModal()	
 			inventData.foil = false
 			inventData.smallImgSrc = ''
 			inventData.doubleFaceCard = false	
 			inventData.secondImgLink = ''
+			inventData.colourType = ''
+			inventData.cardType = ''
 			$.blockUI()	
 		})
 
@@ -269,6 +280,8 @@
 			inventData.smallImgSrc = ''
 			inventData.doubleFaceCard = false
 			inventData.secondImgLink = ''
+			inventData.colourType = ''
+			inventData.cardType = '' //land:1, common:2, uncommon:3, rare:4
 			count = count + parseFloat($('#priceValue').text())
 			updateMoney()
 			populateModal()
@@ -325,114 +338,27 @@
 				commonArr = []
 				landArr = []
 
-				switch(packToOpen)
-				{
-					case "NEO":
-						openNeo()
-						break
-
-					case "SNC":
-						openSnc()
-						break
-
-				}				
+				openPack(packToOpen)		
 			}
 		})
 
 
-		//Add key, value func to set weight
-		async function openNeo()
-		{
-			
-			$('#packPurchaseModal').modal('hide');
-			cards = NeoCards
-			var types = Object.keys(cards[0].data.booster.default.sheets.rareMythic.cards)
-			var freq = Object.values(cards[0].data.booster.default.sheets.rareMythic.cards)
-			while (freq[0] != undefined){
-				if (freq[0] > 0){
-					rareArr.push(types[0])
-					freq[0]--
-				} else {
-					freq.shift()
-					types.shift()
-				}
-			}
-
-			types = Object.keys(cards[0].data.booster.default.sheets.uncommon.cards)
-			freq = Object.values(cards[0].data.booster.default.sheets.uncommon.cards)
-			while (freq[0] != undefined){
-				if (freq[0] > 0){
-					uncommonArr.push(types[0])
-					freq[0]--
-				} else {
-					freq.shift()
-					types.shift()
-				}
-			}
-
-			types = Object.keys(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
-			freq = Object.values(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
-			while (freq[0] != undefined){
-				if (freq[0] > 0){
-					commonUncommonArr.push(types[0])
-					freq[0]--
-				} else {
-					freq.shift()
-					types.shift()
-				}
-			}
-
-			types = Object.keys(cards[0].data.booster.default.sheets.foil.cards)
-			freq = Object.values(cards[0].data.booster.default.sheets.foil.cards)
-			while (freq[0] != undefined){
-				if (freq[0] > 0){
-					foilArr.push(types[0])
-					freq[0]--
-				} else {
-					freq.shift()
-					types.shift()
-				}
-			}
-
-			types = Object.keys(cards[0].data.booster.default.sheets.common.cards)
-			freq = Object.values(cards[0].data.booster.default.sheets.common.cards)
-			while (freq[0] != undefined){
-				if (freq[0] > 0){
-					commonArr.push(types[0])
-					freq[0]--
-				} else {
-					freq.shift()
-					types.shift()
-				}
-			}
-
-			types = Object.keys(cards[0].data.booster.default.sheets.land.cards)
-			freq = Object.values(cards[0].data.booster.default.sheets.land.cards)
-			while (freq[0] != undefined){
-				if (freq[0] > 0){
-					landArr.push(types[0])
-					freq[0]--
-				} else {
-					freq.shift()
-					types.shift()
-				}
-			}
-
-			$('#cardModal').modal('show')
-			$('#closeModalButton').css('display', 'none')
-			$('#nextCardButton').css('display', 'inline-block')
-			
-			updateMoney()
-			getPackCards()
-			populateModal()			
-
-		}
-
-		async function openSnc()
+		async function openPack(pack)
 		{
 			$('#packPurchaseModal').modal('hide');
-			cards = SncCards
-			var rareCardList = Object.entries(cards[0].data.booster.default.sheets.rareMythic.cards)
+			switch(pack) {
+				case 'SNC':
+					cards = SncCards
+					break;
+
+				case 'NEO':
+					cards = NeoCards
+					break;
+
+				case 'DMU':
+					cards = DmuCards
+			}
+			
 			var types = Object.keys(cards[0].data.booster.default.sheets.rareMythic.cards)
 			var freq = Object.values(cards[0].data.booster.default.sheets.rareMythic.cards)
 			while (freq[0] != undefined){
@@ -493,6 +419,20 @@
 				}
 			}
 
+			if (cards[0].data.booster.default.sheets.dfcCommonUncommon?.cards) {
+				types = Object.keys(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
+				freq = Object.values(cards[0].data.booster.default.sheets.dfcCommonUncommon.cards)
+				while (freq[0] != undefined){
+					if (freq[0] > 0){
+						commonUncommonArr.push(types[0])
+						freq[0]--
+					} else {
+						freq.shift()
+						types.shift()
+					}
+				}
+			}
+
 			$('#cardModal').modal('show')
 			$('#closeModalButton').css('display', 'none')
 			$('#nextCardButton').css('display', 'inline-block')
@@ -502,7 +442,6 @@
 			populateModal()	
 		}		
 
-		//IMPLEMENT RANDOM CHANCE FOR ALL CARDS/PRICE FALLBACK
 		async function getUncommonCard() {
 			cardId = uncommonArr[getRandomInt(uncommonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
@@ -514,10 +453,11 @@
 					} else {
 						var selector = imgData.data.length - 1
 					}
-					console.log(imgData)
 					$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
 					$('#priceValue').text(imgData.data[selector].prices.usd)
 					inventData.smallImgSrc = imgData.data[selector].image_uris.small
+					inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
+					inventData.cardType = '3'
 					$.unblockUI()
 				})
 			});	
@@ -529,20 +469,28 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		$.get(data.prints_search_uri, function(imgData) {
 		  			imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-		  			console.log(imgData)
-		  			if (imgData.data[0].card_faces != undefined) {
-			  			flip = imgData.data[0].card_faces
+		  			if (getRandomInt(100)<5){
+						var selector = getRandomInt(imgData.data.length - 1)
+					} else {
+						var selector = imgData.data.length - 1
+					}
+		  			if (imgData.data[selector].card_faces != undefined) {
+			  			flip = imgData.data[selector].card_faces
 			  			inventData.doubleFaceCard = true
-			  			inventData.secondImgLink = imgData.data[0].card_faces[1].image_uris.normal
-			  			inventData.smallImgSrc = imgData.data[0].card_faces[0].image_uris.small
-						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
-						$('#priceValue').text(imgData.data[0].prices.usd)
+			  			inventData.secondImgLink = imgData.data[selector].card_faces[1].image_uris.normal
+			  			inventData.smallImgSrc = imgData.data[selector].card_faces[0].image_uris.small
+			  			inventData.colourType = imgData.data[selector].color_identity[selector] ?? 'Z'
+						inventData.cardType = getCardType(imgData.data[selector].rarity)
+						$('#packOpeningCards').prop('src',imgData.data[selector].card_faces[0].image_uris.normal)
+						$('#priceValue').text(imgData.data[selector].prices.usd)
 						$('#flipCard').css('visibility', 'visible');
 						$.unblockUI()
 					} else {
 						inventData.smallImgSrc = data.image_uris.small
+						inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
+						inventData.cardType = getCardType(imgData.data[selector].rarity)
 						$('#packOpeningCards').prop('src',data.image_uris.normal)
-						$('#priceValue').text(imgData.data[0].prices.usd)
+						$('#priceValue').text(imgData.data[selector].prices.usd)
 						$.unblockUI()
 					}
 		  		})		  		
@@ -565,6 +513,8 @@
 					$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
 					$('#priceValue').text(imgData.data[selector].prices.usd)
 					inventData.smallImgSrc = imgData.data[selector].image_uris.small
+					inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
+					inventData.cardType = '2'
 					$.unblockUI()
 				})
 			})
@@ -577,6 +527,8 @@
 				$('#packOpeningCards').prop('src',data.image_uris.normal) 
 				inventData.smallImgSrc = data.image_uris.small
 				$('#priceValue').text(data.prices.usd) 
+				inventData.colourType = data.color_identity[0] ?? 'Z'
+				inventData.cardType = 1
 				$.unblockUI()  				
 			});	
 		}
@@ -588,20 +540,29 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		$.get(data.prints_search_uri, function(imgData) {
 		  			imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-		  			console.log(imgData)
-		  			if (imgData.data[0].card_faces != undefined) {
-			  			flip = imgData.data[0].card_faces
+		  			if (getRandomInt(100)<5){
+						var selector = getRandomInt(imgData.data.length - 1)
+					} else {
+						var selector = imgData.data.length - 1
+					}
+					inventData.foil = true
+		  			if (imgData.data[selector].card_faces != undefined) {
+			  			flip = imgData.data[selector].card_faces
 			  			inventData.doubleFaceCard = true
-			  			inventData.secondImgLink = imgData.data[0].card_faces[1].image_uris.normal
-			  			inventData.smallImgSrc = imgData.data[0].card_faces[0].image_uris.small
-						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
-						$('#priceValue').text(imgData.data[0].prices.usd)
+			  			inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
+			  			inventData.cardType = getCardType(imgData.data[selector].rarity)			  			
+			  			inventData.secondImgLink = imgData.data[selector].card_faces[1].image_uris.normal
+			  			inventData.smallImgSrc = imgData.data[selector].card_faces[0].image_uris.small
+						$('#packOpeningCards').prop('src',imgData.data[selector].card_faces[0].image_uris.normal)
+						$('#priceValue').text(imgData.data[selector].prices.usd)
 						$('#flipCard').css('visibility', 'visible');
 						$.unblockUI()
 					} else {
-						inventData.smallImgSrc = data.image_uris.small
-						$('#packOpeningCards').prop('src',data.image_uris.normal)
-						$('#priceValue').text(imgData.data[0].prices.usd)
+						inventData.smallImgSrc = imgData.data[selector].image_uris.small
+						inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
+						inventData.cardType = getCardType(imgData.data[selector].rarity)	
+						$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
+						$('#priceValue').text(imgData.data[selector].prices.usd)
 						$.unblockUI()
 					}
 		  		})		  		
@@ -614,17 +575,28 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$.get(data.prints_search_uri, function(imgData) {
 					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-					console.log(imgData)
-					if (imgData.data[0].card_faces != undefined) {						
-			  			inventData.secondImgLink = imgData.data[0].card_faces[1].image_uris.normal
-			  			inventData.smallImgSrc = imgData.data[0].card_faces[0].image_uris.small
-						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
-						$('#priceValue').text(data.prices.usd)
-						$('#flipCard').css('visibility', 'visible');
+					if (getRandomInt(100)<5){
+						var selector = getRandomInt(imgData.data.length - 1)
 					} else {
-						$('#packOpeningCards').prop('src', imgData.data[0].image_uris.normal)
-						$('#priceValue').text(imgData.data[0].prices.usd)
-						inventData.smallImgSrc = imgData.data[0].image_uris.small
+						var selector = imgData.data.length - 1
+					}
+					if (imgData.data[selector].card_faces != undefined) {						
+			  			flip = imgData.data[selector].card_faces
+			  			inventData.doubleFaceCard = true
+			  			inventData.secondImgLink = imgData.data[selector].card_faces[1].image_uris.normal
+			  			inventData.smallImgSrc = imgData.data[selector].card_faces[0].image_uris.small
+			  			inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
+						inventData.cardType = '5'
+						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
+						$('#priceValue').text(imgData.data[selector].prices.usd)
+						$('#flipCard').css('visibility', 'visible');
+						$.unblockUI()
+					} else {
+						$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
+						$('#priceValue').text(imgData.data[selector].prices.usd)
+						inventData.smallImgSrc = imgData.data[selector].image_uris.small
+						inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
+						inventData.cardType = '4'
 						$.unblockUI()
 					}
 				})
@@ -635,6 +607,24 @@
 			pack = cards[0].data.booster.default.boosters[getRandomInt(cards[0].data.booster.default.boosters.length)].contents
 			types = Object.keys(pack)
 			freq = Object.values(pack)
+		}
+
+		function getCardType(rarity) {
+			switch (rarity) {
+				case "land": 
+					return 1
+					break;
+				case "common":
+					return 2
+					break;
+				case "uncommon":
+					return 3
+					break;
+				case "rare":
+				case "mythic":
+					return 4
+					break;
+			}
 		}
 
 		//Make this switch work proper
@@ -686,6 +676,7 @@
 
 		function populateInventory() {
 			$( ".cardCol" ).remove();
+			inventoryArr.sort((a, b) => a.colourType.localeCompare(b.colourType) || a.cardType - b.cardType);
 			inventoryArr.forEach(function (arrayItem) {
 				str = arrayItem.uuid.replace(/\s/g, '');
 				if (arrayItem.foil) {
@@ -705,6 +696,16 @@
 			});
 		}
 
+		function compareType(a,b) {
+		  	if ( a.colourType < b.colourType ){
+		    	return -1;
+		  	}
+		  		if ( a.colourType > b.colourType ){
+		    	return 1;
+		  	}
+		  		return 0;
+		}
+
 		function flipCard() {
 			if (flip[0].image_uris.normal == $('#packOpeningCards').attr('src')) {
 				$('#packOpeningCards').prop('src',flip[1].image_uris.normal)
@@ -713,7 +714,6 @@
 			}
 		}
 
-		//NEEDS FOIL LOGIC
 		function addCardToInvent() {
 			var search = inventoryArr.filter(card => card.uuid == cardId && card.foil == inventData.foil)
 			if (search.length == 0) {
@@ -727,6 +727,8 @@
 					foil: inventData.foil,
 					uuid: cardId,
 					qty:1,
+					colourType: inventData.colourType,
+					cardType: inventData.cardType,
 					price: parseFloat($('#priceValue').text())
 				}
 				inventoryArr.push(currentCard)
@@ -797,6 +799,8 @@
     				mps = saveData.mps
     				inventoryArr = saveData.inventory
     				unlockedPacks = saveData.unlockedPacks
+    				cardType = saveData.cardType
+    				colourType = saveData.colourType
     				updateMoney()
   			};
   			reader.readAsText(file);
