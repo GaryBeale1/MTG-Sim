@@ -97,6 +97,11 @@
 		    			<td id="increaseMpsLabel">$5.00</td>
 		    			<td><button onclick="increaseMPS()">Buy</button></td>
 		    		</tr>
+		    		<tr>
+		    			<td>Increase Click Power</td>
+		    			<td id="increaseCpLabel">$5.00</td>
+		    			<td><button onclick="increaseCp()">Buy</button></td>
+		    		</tr>
 		    		<tr id='SNC'>
 		    			<td>Unlock New Capenna Draft Packs</td>
 		    			<td>$10.00</td>
@@ -155,9 +160,21 @@
 		<div class="modal fade modal-lg" id="settingsModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
-		      <div class="modal-body" style="text-align: center;">		      		
-				<input type="file" id="fileup" onchange='loadSave(event)'/>
-				<button id="saveGameButton" onclick="createSave()">Save Game</button>
+		      <div class="modal-body" style="text-align: center;">	
+		      <table>
+		    		<tr>
+		    			<td>Save Game</td>
+		    			<td><button id="saveGameButton" onclick="createSave()">Save Game</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>Load Game</td>
+		    			<td><input type="file" id="fileup" onchange='loadSave(event)'/></td>
+		    		</tr>
+		    		<tr>
+		    			<td>Background Colour</td>
+		    			<td><input type="text" id="bgColour"/><button onclick="$('body').css('background-color',$('#bgColour').val())">Change</td>
+		    		</tr>
+	    		</table>   		
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -180,11 +197,13 @@
 
 		var count = 10;
 		var mps = 0.0000
+		var cp = 0.01
 		var NeoCards = JSON.parse(NEO);
 		var SncCards = JSON.parse(SNC);
 		var DmuCards = JSON.parse(DMU)
 		var pack, types, freq, flip, cards, cardId, saveData, packToOpen
-		var price = 5
+		var MpsPrice = 5
+		var CpPrice = 5
 
 		var inventData = {
 			"foil": false,
@@ -219,11 +238,21 @@
 		})
 
 		function increaseMPS() {
-			if (count >= price) {
-				count = count - price
+			if (count >= MpsPrice) {
+				count = count - MpsPrice
 				mps = mps+0.0005
-				price = Math.round(price * 1.2)
-				$('#increaseMpsLabel').text('$'+price+'.00')
+				MpsPrice = Math.round(MpsPrice * 1.2)
+				$('#increaseMpsLabel').text('$'+MpsPrice+'.00')
+				updateMoney()
+			}
+		}
+
+		function increaseCp() {
+			if (count >= CpPrice) {
+				count = count - CpPrice
+				cp = cp+0.01
+				CpPrice = Math.round(CpPrice * 1.2)
+				$('#increaseCpLabel').text('$'+CpPrice+'.00')
 				updateMoney()
 			}
 		}
@@ -250,7 +279,7 @@
 
 		$('#mainClicker').on('click', () =>
 		{
-			count = count+0.01;
+			count = count+cp;
 			updateMoney()
 		})
 
@@ -324,10 +353,11 @@
 			if (count > 4) {
 				$.blockUI()
 				count = count - 4	
-				var unlockedPackArr = Object.entries(unlockedPacks)
-				unlockedPackArr.forEach(function (arrayItem, index) {
-					if (arrayItem[1] == false){
-						unlockedPackArr.splice(index, 1)
+				var unlockedPackArr = []
+				var availablePackArr = Object.entries(unlockedPacks)
+				availablePackArr.forEach(function (arrayItem, index) {
+					if (arrayItem[1] != false){
+						unlockedPackArr.push(arrayItem)
 					}
 				})
 				packToOpen = unlockedPackArr[getRandomInt(unlockedPackArr.length)][0]
@@ -437,7 +467,6 @@
 			$('#cardModal').modal('show')
 			$('#closeModalButton').css('display', 'none')
 			$('#nextCardButton').css('display', 'inline-block')
-			count = count - 4
 			updateMoney()
 			getPackCards()
 			populateModal()	
