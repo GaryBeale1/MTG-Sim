@@ -32,7 +32,18 @@
 		    <div class="modal-content">
 		      <div class="modal-body" style="text-align: center;">		      		
 				<i class="fa fa-refresh modalElements" id="flipCard" style="cursor: pointer; display: block; margin-bottom: 10px;"></i>
-		        <img id="packOpeningCards"></img>
+
+				<div class="flip-card">
+				  	<div class="flip-card-inner" style="transition: transform 0.6s;">
+				    	<div class="flip-card-front">
+				      		<img src="Magic_card_back.jpg" id="cardBack" style="width:488px;height:680px;">
+				    	</div>
+				    	<div class="flip-card-back">
+				      		<img id="packOpeningCards"></img>
+				    	</div>
+				  	</div>
+				</div>
+
 		        <p id="cardPrice" class="modalElements">
 		        	<span class="foil">✨</span>
 		        		Price: $
@@ -174,6 +185,14 @@
 		    			<td>Background Colour</td>
 		    			<td><input type="text" id="bgColour"/><button onclick="$('body').css('background-color',$('#bgColour').val())">Change</td>
 		    		</tr>
+		    		<tr>
+		    			<td>Button Colour</td>
+		    			<td>
+		    				<input type="text" id="textStartColour"/>
+		    				<input type="text" id="textEndColour"/>
+		    				<button onclick="$('.mainDisplay').css('background-image', 'linear-gradient('+$('#textStartColour').val()+', '+$('#textEndColour').val()+')')">Change</button>
+	    				</td>
+		    		</tr>
 	    		</table>   		
 		      </div>
 		      <div class="modal-footer">
@@ -283,8 +302,15 @@
 			updateMoney()
 		})
 
+		$('#cardBack').on('click', () => {	
+			$('.flip-card-inner').css({transition: 'transform 0.6s'})		
+			$('.flip-card-inner').css('transform', 'rotateY(-180deg)')
+		})
+
 		$('#nextCardButton').on('click', () =>
-		{
+		{	
+			$('.flip-card-inner').css({transition: 'transform 0.0s'})
+			$('.flip-card-inner').css('transform', '');
 			$('.foil').css('visibility','hidden')
 			console.log(inventData)
 			addCardToInvent()
@@ -300,11 +326,14 @@
 
 		$('#closeModalButton').on('click', () =>
 		{
+			$('.flip-card-inner').css('transform', '');
 			addCardToInvent()			
 		})
 
 		$('#sellCardButton').on('click', () =>
 		{
+			$('.flip-card-inner').css({transition: 'transform 0.0s'})
+			$('.flip-card-inner').css('transform', '');
 			$('.foil').css('visibility','hidden')
 			inventData.foil = false
 			inventData.smallImgSrc = ''
@@ -478,7 +507,7 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$.get(data.prints_search_uri, function(imgData) {
 					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-					if (getRandomInt(100)<5){
+					if (getRandomInt(100)<10){
 						var selector = getRandomInt(imgData.data.length - 1)
 					} else {
 						var selector = imgData.data.length - 1
@@ -499,7 +528,7 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		$.get(data.prints_search_uri, function(imgData) {
 		  			imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-		  			if (getRandomInt(100)<5){
+		  			if (getRandomInt(100)<10){
 						var selector = getRandomInt(imgData.data.length - 1)
 					} else {
 						var selector = imgData.data.length - 1
@@ -534,7 +563,7 @@
 			$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$.get(data.prints_search_uri, function(imgData) {
 					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-					if (getRandomInt(100)<5){
+					if (getRandomInt(100)<10){
 						var selector = getRandomInt(imgData.data.length - 1)
 					} else {
 						var selector = imgData.data.length - 1
@@ -570,7 +599,7 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 		  		$.get(data.prints_search_uri, function(imgData) {
 		  			imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-		  			if (getRandomInt(100)<5){
+		  			if (getRandomInt(100)<10){
 						var selector = getRandomInt(imgData.data.length - 1)
 					} else {
 						var selector = imgData.data.length - 1
@@ -605,7 +634,7 @@
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$.get(data.prints_search_uri, function(imgData) {
 					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
-					if (getRandomInt(100)<5){
+					if (getRandomInt(100)<10){
 						var selector = getRandomInt(imgData.data.length - 1)
 					} else {
 						var selector = imgData.data.length - 1
