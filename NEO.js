@@ -6,6 +6,54 @@ NEO = `[{
 	"data": {
 		"baseSetSize": 302,
 		"booster": {
+			"set": {
+				"boosters": [{
+					"contents": {						
+						"basic": 1,						
+						"common": 5,
+						"uncommon": 4,
+						"foil": 1,
+						"rareMythic": 1
+					},
+					"weight": 30
+				}, {
+				"contents": {						
+						"basic": 1,						
+						"common": 3,
+						"uncommon": 3,
+						"foil": 1,
+						"rareMythic": 4
+					},
+					"weight": 1
+				}, {
+					"contents": {						
+						"basic": 1,						
+						"common": 3,
+						"uncommon": 4,
+						"foil": 1,
+						"rareMythic": 3
+					},
+					"weight": 3
+				}, {
+					"contents": {						
+						"basic": 1,						
+						"common": 4,
+						"uncommon": 4,
+						"foil": 1,
+						"rareMythic": 2
+					},
+					"weight": 25
+				}, {
+					"contents": {	
+						"basic": 1,						
+						"common": 5,
+						"uncommon": 5,						
+						"foil": 1,
+						"rareMythic": 1
+					},
+					"weight": 30
+				}]
+			},
 			"arena": {
 				"boosters": [{
 					"contents": {						

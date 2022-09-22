@@ -80,6 +80,11 @@
 		    			<td>$4.00</td>
 		    			<td><button id="draftBoosterPurchase">Buy</button></td>
 		    		</tr>
+		    		<tr id='setBoosterPurchaseRow' style="display:none;">
+		    			<td>Set Booster</td>
+		    			<td>$6.00</td>
+		    			<td><button id="setBoosterPurchase">Buy</button></td>
+		    		</tr>
 		    	</table>	      		
 		      </div>
 		      <div class="modal-footer">
@@ -120,8 +125,13 @@
 		    		</tr>
 		    		<tr id='DMU'>
 		    			<td>Unlock Dominaria United Draft Packs</td>
+		    			<td>$10.00</td>
+		    			<td><button onclick="unlockNewPack('DMU', 10)">Buy</button></td>
+		    		</tr>
+		    		<tr id='setBooster'>
+		    			<td>Unlock Set Booster Packs</td>
 		    			<td>$20.00</td>
-		    			<td><button onclick="unlockNewPack('DMU', 20)">Buy</button></td>
+		    			<td><button onclick="unlockSetBooster()">Buy</button></td>
 		    		</tr>
 		    	</table>	      		
 		      </div>
@@ -188,8 +198,8 @@
 		    		<tr>
 		    			<td>Button Colour</td>
 		    			<td>
-		    				<input type="text" id="textStartColour"/>
-		    				<input type="text" id="textEndColour"/>
+		    				<input type="text" id="textStartColour" placeholder="Top Colour"/>
+		    				<input type="text" id="textEndColour" placeholder="Bottom Colour"/>
 		    				<button onclick="$('.mainDisplay').css('background-image', 'linear-gradient('+$('#textStartColour').val()+', '+$('#textEndColour').val()+')')">Change</button>
 	    				</td>
 		    		</tr>
@@ -266,6 +276,15 @@
 			}
 		}
 
+		function unlockSetBooster() {
+			if(count >= 20){
+				count = count - 20;
+				updateMoney();
+				$("#setBooster").remove()
+				$('#setBoosterPurchaseRow').css('display', 'table-row')
+			}
+		}
+
 		function increaseCp() {
 			if (count >= CpPrice) {
 				count = count - CpPrice
@@ -312,7 +331,6 @@
 			$('.flip-card-inner').css({transition: 'transform 0.0s'})
 			$('.flip-card-inner').css('transform', '');
 			$('.foil').css('visibility','hidden')
-			console.log(inventData)
 			addCardToInvent()
 			populateModal()	
 			inventData.foil = false
@@ -364,11 +382,6 @@
 		$('#packPurchase').on('click', function()
 		{	
 			$('#packPurchaseModal').modal('show');
-		})
-
-		$('#inventory').on('click', function()
-		{	
-			console.log(inventoryArr)
 		})	
 
 		$('#inventory').on('click', () =>
@@ -379,7 +392,7 @@
 
 		$('#draftBoosterPurchase').on('click', function()
 		{		
-			if (count > 4) {
+			if (count >= 4) {
 				$.blockUI()
 				count = count - 4	
 				var unlockedPackArr = []
@@ -398,12 +411,37 @@
 				commonArr = []
 				landArr = []
 
-				openPack(packToOpen)		
+				openPack(packToOpen, 'draft')		
+			}
+		})
+
+		$('#setBoosterPurchase').on('click', function()
+		{		
+			if (count >= 6) {
+				$.blockUI()
+				count = count - 6	
+				var unlockedPackArr = []
+				var availablePackArr = Object.entries(unlockedPacks)
+				availablePackArr.forEach(function (arrayItem, index) {
+					if (arrayItem[1] != false){
+						unlockedPackArr.push(arrayItem)
+					}
+				})
+				packToOpen = unlockedPackArr[getRandomInt(unlockedPackArr.length)][0]
+
+				rareArr = []
+				foilArr = []
+				uncommonArr = []
+				commonUncommonArr = []
+				commonArr = []
+				landArr = []
+
+				openPack(packToOpen, 'set')		
 			}
 		})
 
 
-		async function openPack(pack)
+		async function openPack(pack, type)
 		{
 			$('#packPurchaseModal').modal('hide');
 			switch(pack) {
@@ -417,6 +455,7 @@
 
 				case 'DMU':
 					cards = DmuCards
+					break;
 			}
 			
 			var types = Object.keys(cards[0].data.booster.default.sheets.rareMythic.cards)
@@ -497,7 +536,7 @@
 			$('#closeModalButton').css('display', 'none')
 			$('#nextCardButton').css('display', 'inline-block')
 			updateMoney()
-			getPackCards()
+			getPackCards(type)
 			populateModal()	
 		}		
 
@@ -568,7 +607,6 @@
 					} else {
 						var selector = imgData.data.length - 1
 					}
-					console.log(imgData)
 					$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
 					$('#priceValue').text(imgData.data[selector].prices.usd)
 					inventData.smallImgSrc = imgData.data[selector].image_uris.small
@@ -662,10 +700,16 @@
 			})
 	  	}		
 
-		function getPackCards(){
-			pack = cards[0].data.booster.default.boosters[getRandomInt(cards[0].data.booster.default.boosters.length)].contents
-			types = Object.keys(pack)
-			freq = Object.values(pack)
+		function getPackCards(type){
+			if (type == 'draft') {
+				pack = cards[0].data.booster.default.boosters[getRandomInt(cards[0].data.booster.default.boosters.length)].contents
+				types = Object.keys(pack)
+				freq = Object.values(pack)
+			} else if (type == 'set') {
+				pack = cards[0].data.booster.set.boosters[getRandomInt(cards[0].data.booster.set.boosters.length)].contents
+				types = Object.keys(pack)
+				freq = Object.values(pack)
+			}
 		}
 
 		function getCardType(rarity) {
@@ -838,7 +882,9 @@
 				"money": count,
 				"mps": mps,
 				"inventory": inventoryArr,
-				"unlockedPacks": unlockedPacks
+				"unlockedPacks": unlockedPacks,
+				"boxColour": $('.mainDisplay').css('background-image'),
+				"backgroundColor": $('body').css('background-color')
 		})
 			var element = document.createElement('a');
 		 	element.setAttribute('href','data:text/plain;charset=utf-8, ' + textInput);
@@ -852,7 +898,6 @@
     		var file = files[0];
   			const reader = new FileReader();
   			reader.onload = (evt) => {
-    				console.log(reader.result);
     				saveData = JSON.parse(reader.result)
     				count = saveData.money
     				mps = saveData.mps
@@ -860,6 +905,8 @@
     				unlockedPacks = saveData.unlockedPacks
     				cardType = saveData.cardType
     				colourType = saveData.colourType
+    				$('.mainDisplay').css('background-image', saveData.boxColour)
+    				$('body').css('background-color', saveData.backgroundColor)
     				updateMoney()
   			};
   			reader.readAsText(file);
