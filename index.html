@@ -224,7 +224,7 @@
 		<script type="text/javascript" src="DMU.js"></script>
 		<script type="text/javascript">
 
-		var count = 10;
+		var count = 30;
 		var mps = 0.0000
 		var cp = 0.01
 		var NeoCards = JSON.parse(NEO);
@@ -320,6 +320,12 @@
 			count = count+cp;
 			updateMoney()
 		})
+
+		$('#packOpeningCards').on("load", () => {
+			setTimeout( () => {
+				$('#cardBack').trigger('click')
+			}, 700);
+		}) 
 
 		$('#cardBack').on('click', () => {	
 			$('.flip-card-inner').css({transition: 'transform 0.6s'})		
