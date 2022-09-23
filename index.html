@@ -18,11 +18,15 @@
 			</div>
 
 			<div id="inventory" class="mainDisplay secondaryDisplay col">
-				<p class="buttonText">Inventory (WIP) <i class="fa fa-suitcase" aria-hidden="true"></i></p>			
+				<p class="buttonText">Inventory <i class="fa fa-suitcase" aria-hidden="true"></i></p>			
 			</div>
 
 			<div id="shop" class="mainDisplay secondaryDisplay col">
-				<p class="buttonText">Shop (WIP) <i class="fa-solid fa-shopping-cart"></i><p>
+				<p class="buttonText">Shop <i class="fa-solid fa-shopping-cart"></i><p>
+			</div>
+
+			<div id="game" class="mainDisplay secondaryDisplay col">
+				<p class="buttonText">Game (WIP) <i class="fa-solid fa-dice"></i><p>
 			</div>
 		</div>
 
@@ -146,6 +150,7 @@
 		  <div class="modal-dialog">
 		    <div class="modal-content">
     	      <div class="modal-header">
+    	      	Inventory Value: $<span id="inventoryValue"> </span>
         		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			  </div>
 		      <div class="modal-body" style="text-align: center;">	
@@ -207,6 +212,66 @@
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- Game Start Modal -->
+		<div class="modal fade modal-lg" id="gameModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+    	      <div class="modal-header">
+    	      	<h3>Shop</h3>
+        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+		      <div class="modal-body" style="text-align: center;">	
+		    	<table>
+		    		<tr>
+		    			<td>Number of Packs</td>
+		    			<td>Type of Packs</td>
+		    			<td>Price</td>
+		    			<td></td>
+		    		</tr>
+		    		<tr>
+		    			<td>1</td>
+		    			<td>Draft Booster</td>
+		    			<td>$7.00</td>
+		    			<td><button onclick="playGame('draft', 1, 7)">Play</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>2</td>
+		    			<td>Draft Booster</td>
+		    			<td>$14.00</td>
+		    			<td><button onclick="playGame('draft', 2, 14)">Play</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>3</td>
+		    			<td>Draft Booster</td>
+		    			<td>$20.00</td>
+		    			<td><button onclick="playGame('draft', 3, 20)">Play</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>1</td>
+		    			<td>Set Booster</td>
+		    			<td>$9.00</td>
+		    			<td><button onclick="playGame('set', 1, 9)">Play</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>2</td>
+		    			<td>Set Booster</td>
+		    			<td>$18.00</td>
+		    			<td><button onclick="playGame('set', 2, 18)">Play</button></td>
+		    		</tr>
+		    		<tr>
+		    			<td>3</td>
+		    			<td>Set Booster</td>
+		    			<td>$25.00</td>
+		    			<td><button onclick="playGame('set', 3, 25)">Play</button></td>
+		    		</tr>
+		    	</table>	      		
+		      </div>
+		      <div class="modal-footer">
 		      </div>
 		    </div>
 		  </div>
@@ -380,9 +445,13 @@
 			$('#settingsModal').modal('show')
 		})
 
-		$('#shop').on('click', function()
+		$('#shop').on('click', () =>
 		{	
 			$('#shopModal').modal('show');
+		})
+
+		$('#game').on('click', () => {
+			$('#gameModal').modal('show')
 		})
 
 		$('#packPurchase').on('click', function()
@@ -393,6 +462,12 @@
 		$('#inventory').on('click', () =>
 		{			
 			$('#inventoryModal').modal('show')
+			var inventoryValue = 0
+			inventoryArr.forEach(data => {
+				inventoryValue += data.price
+			})
+			inventoryValue = Math.round(inventoryValue*100)/100
+			$('#inventoryValue').text(inventoryValue)
 			populateInventory()
 		})	
 
@@ -544,12 +619,26 @@
 			updateMoney()
 			getPackCards(type)
 			populateModal()	
-		}		
+		}
 
-		async function getUncommonCard() {
-			cardId = uncommonArr[getRandomInt(uncommonArr.length)]
+		async function getLandCard() {
+			cardId = landArr[getRandomInt(landArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
 		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+				$('#packOpeningCards').prop('src',data.image_uris.normal) 
+				inventData.smallImgSrc = data.image_uris.small
+				$('#priceValue').text(data.prices.usd) 
+				inventData.colourType = data.color_identity[0] ?? 'Z'
+				inventData.cardType = 1
+				$.unblockUI()  				
+			});	
+		}
+
+		async function getCommonCard() {
+			$.blockUI()
+			cardId = commonArr[getRandomInt(commonArr.length)]
+			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
+			$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$.get(data.prints_search_uri, function(imgData) {
 					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
 					if (getRandomInt(100)<10){
@@ -558,13 +647,19 @@
 						var selector = imgData.data.length - 1
 					}
 					$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
-					$('#priceValue').text(imgData.data[selector].prices.usd)
+					if (imgData.data[selector].prices.usd != undefined) {
+						$('#priceValue').text(imgData.data[selector].prices.usd)
+					} else if (imgData.data[0].prices.usd_foil != undefined) {
+						$('#priceValue').text(imgData.data[0].prices.usd_foil)
+					} else {
+						$('#priceValue').text(imgData.data[0].prices.usd_etched)
+					}
 					inventData.smallImgSrc = imgData.data[selector].image_uris.small
 					inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
-					inventData.cardType = '3'
+					inventData.cardType = '2'
 					$.unblockUI()
 				})
-			});	
+			})
 		}
 
 		async function getCommonUncommonCard() {
@@ -586,7 +681,13 @@
 			  			inventData.colourType = imgData.data[selector].color_identity[selector] ?? 'Z'
 						inventData.cardType = getCardType(imgData.data[selector].rarity)
 						$('#packOpeningCards').prop('src',imgData.data[selector].card_faces[0].image_uris.normal)
-						$('#priceValue').text(imgData.data[selector].prices.usd)
+						if (imgData.data[selector].prices.usd != undefined) {
+							$('#priceValue').text(imgData.data[selector].prices.usd)
+						} else if (imgData.data[0].prices.usd_foil != undefined) {
+							$('#priceValue').text(imgData.data[0].prices.usd_foil)
+						} else {
+							$('#priceValue').text(imgData.data[0].prices.usd_etched)
+						}
 						$('#flipCard').css('visibility', 'visible');
 						$.unblockUI()
 					} else {
@@ -594,18 +695,23 @@
 						inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
 						inventData.cardType = getCardType(imgData.data[selector].rarity)
 						$('#packOpeningCards').prop('src',data.image_uris.normal)
-						$('#priceValue').text(imgData.data[selector].prices.usd)
+						if (imgData.data[selector].prices.usd != undefined) {
+							$('#priceValue').text(imgData.data[selector].prices.usd)
+						} else if (imgData.data[0].prices.usd_foil != undefined) {
+							$('#priceValue').text(imgData.data[0].prices.usd_foil)
+						} else {
+							$('#priceValue').text(imgData.data[0].prices.usd_etched)
+						}
 						$.unblockUI()
 					}
 		  		})		  		
 			});	
 		}
 
-		async function getCommonCard() {
-			$.blockUI()
-			cardId = commonArr[getRandomInt(commonArr.length)]
+		async function getUncommonCard() {
+			cardId = uncommonArr[getRandomInt(uncommonArr.length)]
 			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
-			$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
+		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
 				$.get(data.prints_search_uri, function(imgData) {
 					imgData.data = imgData.data.filter(card => card.promo == false && card.set == packToOpen.toLocaleLowerCase())
 					if (getRandomInt(100)<10){
@@ -614,25 +720,18 @@
 						var selector = imgData.data.length - 1
 					}
 					$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
-					$('#priceValue').text(imgData.data[selector].prices.usd)
+					if (imgData.data[selector].prices.usd != undefined) {
+						$('#priceValue').text(imgData.data[selector].prices.usd)
+					} else if (imgData.data[0].prices.usd_foil != undefined) {
+						$('#priceValue').text(imgData.data[0].prices.usd_foil)
+					} else {
+						$('#priceValue').text(imgData.data[0].prices.usd_etched)
+					}
 					inventData.smallImgSrc = imgData.data[selector].image_uris.small
 					inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
-					inventData.cardType = '2'
+					inventData.cardType = '3'
 					$.unblockUI()
 				})
-			})
-		}
-
-		async function getLandCard() {
-			cardId = landArr[getRandomInt(landArr.length)]
-			let obj = cards[0].data.cards.find(o => o.uuid == cardId);
-		  	$.get("https://api.scryfall.com/cards/"+obj.identifiers.scryfallId, function(data){
-				$('#packOpeningCards').prop('src',data.image_uris.normal) 
-				inventData.smallImgSrc = data.image_uris.small
-				$('#priceValue').text(data.prices.usd) 
-				inventData.colourType = data.color_identity[0] ?? 'Z'
-				inventData.cardType = 1
-				$.unblockUI()  				
 			});	
 		}
 
@@ -657,7 +756,11 @@
 			  			inventData.secondImgLink = imgData.data[selector].card_faces[1].image_uris.normal
 			  			inventData.smallImgSrc = imgData.data[selector].card_faces[0].image_uris.small
 						$('#packOpeningCards').prop('src',imgData.data[selector].card_faces[0].image_uris.normal)
-						$('#priceValue').text(imgData.data[selector].prices.usd)
+						if (imgData.data[0].prices.usd_foil != undefined) {
+							$('#priceValue').text(imgData.data[0].prices.usd_foil)
+						} else {
+							$('#priceValue').text(imgData.data[0].prices.usd_etched)
+						}
 						$('#flipCard').css('visibility', 'visible');
 						$.unblockUI()
 					} else {
@@ -665,7 +768,11 @@
 						inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
 						inventData.cardType = getCardType(imgData.data[selector].rarity)	
 						$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
-						$('#priceValue').text(imgData.data[selector].prices.usd)
+						if (imgData.data[0].prices.usd_foil != undefined) {
+							$('#priceValue').text(imgData.data[0].prices.usd_foil)
+						} else {
+							$('#priceValue').text(imgData.data[0].prices.usd_etched)
+						}
 						$.unblockUI()
 					}
 		  		})		  		
@@ -689,14 +796,26 @@
 			  			inventData.secondImgLink = imgData.data[selector].card_faces[1].image_uris.normal
 			  			inventData.smallImgSrc = imgData.data[selector].card_faces[0].image_uris.small
 			  			inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
-						inventData.cardType = '5'
+						inventData.cardType = '4'
 						$('#packOpeningCards').prop('src',imgData.data[0].card_faces[0].image_uris.normal)
-						$('#priceValue').text(imgData.data[selector].prices.usd)
+						if (imgData.data[selector].prices.usd != undefined) {
+							$('#priceValue').text(imgData.data[selector].prices.usd)
+						} else if (imgData.data[0].prices.usd_foil != undefined) {
+							$('#priceValue').text(imgData.data[0].prices.usd_foil)
+						} else {
+							$('#priceValue').text(imgData.data[0].prices.usd_etched)
+						}
 						$('#flipCard').css('visibility', 'visible');
 						$.unblockUI()
 					} else {
 						$('#packOpeningCards').prop('src', imgData.data[selector].image_uris.normal)
-						$('#priceValue').text(imgData.data[selector].prices.usd)
+						if (imgData.data[selector].prices.usd != undefined) {
+							$('#priceValue').text(imgData.data[selector].prices.usd)
+						} else if (imgData.data[0].prices.usd_foil != undefined) {
+							$('#priceValue').text(imgData.data[0].prices.usd_foil)
+						} else {
+							$('#priceValue').text(imgData.data[0].prices.usd_etched)
+						}
 						inventData.smallImgSrc = imgData.data[selector].image_uris.small
 						inventData.colourType = imgData.data[selector].color_identity[0] ?? 'Z'
 						inventData.cardType = '4'
@@ -855,6 +974,13 @@
 			if (inventoryArr[search].qty == 0) {
 				inventoryArr.splice(search, 1)				
 			}
+			var inventoryValue = 0
+			inventoryArr.forEach(data => {
+				inventoryValue += data.price
+			})
+			inventoryValue = Math.round(inventoryValue*100)/100
+			inventoryValue = inventoryValue.toFixed(2)
+			$('#inventoryValue').text(inventoryValue)
 			populateInventory()
 		}
 
@@ -880,6 +1006,22 @@
 				$('#inspectImg').prop('src',flip[1].image_uris.normal)
 			} else {
 				$('#inspectImg').prop('src',flip[0].image_uris.normal)
+			}
+		}
+
+		//Add functionality to swap between invent and temp arr(s)
+		function playGame(packType, numOfPacks, price) {
+			$('#gameModal').modal('hide')
+			if (price <= count) {
+				count -= price
+
+				switch(packType) {
+					case 'draft':
+						break;
+
+					case 'set':
+						break;
+				}
 			}
 		}
 
